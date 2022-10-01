@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="@string/to_home"
+            android:icon="@drawable/to_home"/>
+
+        <item
+            android:id="@+id/nav_new_category"
+            android:title="@string/new_category"
+            android:icon="@drawable/add_category"/>
+
+        <item
+            android:id="@+id/nav_list_of_categories"
+            android:title="@string/list_of_categories"
+            android:icon="@drawable/available_categories"/>
+    </group>
+
+    <group android:checkableBehavior="single">
+
+        <item android:title="@string/settings">
+
+            <menu>
+                <item
+                    android:id="@+id/nav_settings"
+                    android:title="@string/settings"
+                    android:icon="@drawable/settings"/>
+            </menu>
+
+        </item>
+
+    </group>
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_about"
+            android:title="@string/about"
+            android:icon="@drawable/settings"/>
+
+    </group>
+
+</menu>

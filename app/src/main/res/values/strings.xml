@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Wardrobe</string>
+    <string name="current_dress">Current dress</string>
+    <string name="to_home">Домой</string>
+    <string name="new_category">Добавить категорию</string>
+    <string name="list_of_categories">Имеющиеся категории</string>
+    <string name="settings">Настройки</string>
+    <string name="about">О программе</string>
+    <string name="add_dress">Добавление одежды</string>
+    <string name="to_sidebar">Боковое меню</string>
+    <string name="navigation_drawer_open">Открыть боковое меню</string>
+    <string name="navigation_drawer_close">Закрыть боковое меню</string>
+</resources>
