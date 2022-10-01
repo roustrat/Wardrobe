@@ -8,9 +8,9 @@ import com.str.wardrobe.simpleMVVM.views.model.WardrobeRepository
 import com.str.wardrobe.simpleMVVM.views.model.entities.NamedCategory
 
 class CategoryInfoViewModel (
-    private val repository: WardrobeRepository,
     private val navigator: Navigator,
-    private val uiActions: UiActions
+    private val uiActions: UiActions,
+    private val repository: WardrobeRepository
 ) : BaseViewModel() {
 
     private val currentCategory: NamedCategory = NamedCategory("", "")

@@ -15,9 +15,8 @@ import com.str.wardrobe.simpleMVVM.views.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.views.model.entities.NamedDress
 
 class DressesCategoryViewModel (
-    private val repository: WardrobeRepository,
     private val navigator: Navigator,
-    private val uiActions: UiActions
+    private val repository: WardrobeRepository
         ) : BaseViewModel(), CategoriesAdapter.Listener, DressesAdapter.Listener {
 
     // Надо подумать как сделать их private

@@ -12,8 +12,8 @@ import com.str.wardrobe.MainViewModel
 import java.lang.reflect.Constructor
 
 /**
-* Use this method for getting view-models from your fragments
-*/
+ * Use this method for getting view-models from your fragments
+ */
 inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<VM> {
     val application = requireActivity().application as App
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
@@ -28,7 +28,7 @@ inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<
     // - singleton scope dependencies (repositories) -> from App class
     // - activity VM scope dependencies -> from MainViewModel
     // - screen VM scope dependencies -> screen args
-    val dependencies = listOf(screen, mainViewModel) + application.models
+    val dependencies = listOf(screen, mainViewModel) + application.addModels(application.applicationContext)
 
     // creating factory
     ViewModelFactory(dependencies, this)
@@ -53,7 +53,6 @@ class ViewModelFactory(
 
         // generating the list of arguments to be passed into the view-model's constructor
         val arguments = findDependencies(constructor, dependenciesWithSavedState)
-
         // creating view-model
         return constructor.newInstance(*arguments.toTypedArray()) as T
     }

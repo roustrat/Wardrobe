@@ -9,12 +9,11 @@ import com.str.wardrobe.simpleMVVM.views.model.WardrobeRepository
 import com.str.wardrobe.simpleMVVM.views.model.entities.NamedDress
 import com.str.wardrobe.simpleMVVM.views.dressinfoEditable.DressInfoEditableFragment.Screen
 
-class DressInfoEditableViewModel (
-    private val repository: WardrobeRepository,
+class DressInfoEditableViewModel(
     screen: Screen,
     private val navigator: Navigator,
-    private val uiActions: UiActions
-        ) : BaseViewModel ()  {
+    private val repository: WardrobeRepository
+) : BaseViewModel ()  {
 
         private val currentDress: NamedDress = NamedDress("", screen.nameDressCategory.name, R.drawable.empty_photo, "")
 

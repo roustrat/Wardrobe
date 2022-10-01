@@ -32,15 +32,18 @@ class DressesCategoryFragment : BaseFragment() {
         setupLayoutManager(binding, adapterCategory, adapterDress)
 
         viewModel.allCategory.observe(viewLifecycleOwner) {
-            if (it != null)
+            if (it != null) {
                 adapterCategory.items = it as List<NamedCategory>
                 viewModel.currentCategory = it.first()
+            }
+
         }
 
         viewModel.currentDresses.observe(viewLifecycleOwner) {
-            if (it != null)
+            if (it != null) {
                 adapterDress.items = it
                 viewModel.currentDress = it.first()
+            }
         }
 
 
