@@ -2,9 +2,7 @@ package com.str.wardrobe.simpleMVVM.views.dressInfo
 
 import android.nfc.FormatException
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView

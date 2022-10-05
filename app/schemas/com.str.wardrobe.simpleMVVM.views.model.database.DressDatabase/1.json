@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "80f25e79bf85aea006cffd5f98ef1c31",
+    "identityHash": "b45409d330891ee0560be2b45ac8b670",
     "entities": [
       {
         "tableName": "namedDress",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `category` TEXT NOT NULL, `id` INTEGER NOT NULL, `description` TEXT, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL COLLATE NOCASE, `category` TEXT NOT NULL, `id` INTEGER NOT NULL, `description` TEXT, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -39,14 +39,24 @@
           ],
           "autoGenerate": false
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_namedDress_name",
+            "unique": true,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_namedDress_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '80f25e79bf85aea006cffd5f98ef1c31')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b45409d330891ee0560be2b45ac8b670')"
     ]
   }
 }

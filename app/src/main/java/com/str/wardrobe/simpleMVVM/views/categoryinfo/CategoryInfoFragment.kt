@@ -2,9 +2,7 @@ package com.str.wardrobe.simpleMVVM.views.categoryinfo
 
 import android.nfc.FormatException
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import com.str.wardrobe.R
@@ -29,7 +27,6 @@ class CategoryInfoFragment : BaseFragment() {
     ): View? {
 
 
-
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -39,6 +36,38 @@ class CategoryInfoFragment : BaseFragment() {
         categoryDescription = view.findViewById(R.id.descriptionOfCategory_edit)
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_category_fragment, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.add_category -> {
+                if (viewModel.currentCategory.name == "") {
+                    categoryName.error
+                } else {
+                    if (viewModel.currentCategory.description == "") {
+                        categoryDescription.error
+                    } else {
+                        viewModel.saveCategory()
+                    }
+                }
+                true
+            }
+            R.id.cancel_category -> {
+                viewModel.closeWithoutSaveCategory()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onStart() {

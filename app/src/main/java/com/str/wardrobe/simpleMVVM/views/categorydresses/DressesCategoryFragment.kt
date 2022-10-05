@@ -2,10 +2,7 @@ package com.str.wardrobe.simpleMVVM.views.categorydresses
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,19 +28,15 @@ class DressesCategoryFragment : BaseFragment() {
         val adapterDress = DressesAdapter(viewModel)
         setupLayoutManager(binding, adapterCategory, adapterDress)
 
-        viewModel.allCategory.observe(viewLifecycleOwner) {
-            if (it != null) {
-                adapterCategory.items = it as List<NamedCategory>
-                viewModel.currentCategory = it.first()
-            }
+        viewModel.repositoryPublic.allCategory?.observe(viewLifecycleOwner) {
+            adapterCategory.items = it as List<NamedCategory>
+            viewModel.repositoryPublic.currentCategory = it.first()
 
         }
 
-        viewModel.currentDresses.observe(viewLifecycleOwner) {
-            if (it != null) {
-                adapterDress.items = it
-                viewModel.currentDress = it.first()
-            }
+        viewModel.repositoryPublic.currentDresses?.observe(viewLifecycleOwner) {
+            adapterDress.items = it
+            viewModel.currentDress = it.first()
         }
 
 

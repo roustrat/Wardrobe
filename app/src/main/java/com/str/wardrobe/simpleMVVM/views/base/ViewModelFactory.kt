@@ -1,5 +1,8 @@
 package com.str.wardrobe.simpleMVVM.views.base
 
+import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
@@ -14,6 +17,25 @@ import java.lang.reflect.Constructor
 /**
  * Use this method for getting view-models from your fragments
  */
+
+typealias ViewModelCreator<VM> = () -> VM
+
+//class ViewModelFactory<VM : ViewModel>(
+//    private val viewModelCreator: ViewModelCreator<VM>
+//) : ViewModelProvider.Factory {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        return viewModelCreator() as T
+//    }
+//}
+//
+//inline fun <reified VM : ViewModel> Fragment.viewModelCreator(noinline creator: ViewModelCreator<VM>): Lazy<VM> {
+//    return viewModels { ViewModelFactory(creator) }
+//}
+//
+//inline fun <reified VM : ViewModel> ComponentActivity.viewModelCreator(noinline creator: ViewModelCreator<VM>): Lazy<VM> {
+//    return viewModels { ViewModelFactory(creator) }
+//}
+
 inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<VM> {
     val application = requireActivity().application as App
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
@@ -22,12 +44,14 @@ inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<
     val provider = ViewModelProvider(requireActivity(),
         ViewModelProvider.AndroidViewModelFactory(application)
     )
+
     val mainViewModel = provider[MainViewModel::class.java]
 
     // forming the list of available dependencies:
     // - singleton scope dependencies (repositories) -> from App class
     // - activity VM scope dependencies -> from MainViewModel
     // - screen VM scope dependencies -> screen args
+//    val dependencies = listOf(screen, mainViewModel) + application.addModels(application.applicationContext)
     val dependencies = listOf(screen, mainViewModel) + application.addModels(application.applicationContext)
 
     // creating factory
@@ -39,7 +63,7 @@ class ViewModelFactory(
     owner: SavedStateRegistryOwner
 ) : AbstractSavedStateViewModelFactory(owner, null) {
 
-    override fun <T : ViewModel?> create(
+    override fun <T : ViewModel> create(
         key: String,
         modelClass: Class<T>,
         handle: SavedStateHandle

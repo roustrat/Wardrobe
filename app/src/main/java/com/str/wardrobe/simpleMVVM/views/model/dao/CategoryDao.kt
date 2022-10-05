@@ -16,7 +16,7 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT * FROM namedCategory")
-    fun getAllCategory(): LiveData<List<NamedCategory?>>
+    fun getAllCategory(): LiveData<List<NamedCategory>>
 
     @Transaction
     @Insert

@@ -12,10 +12,15 @@ class App : Application() {
     /**
      * Place your repositories here, now we have only 1 repository
      */
-//    var models:List<Any> = listOf<Any>()
+//    var models:List<Any> = listOf<Any>(WardrobeRepository.also {
+//        it.initialize(this)
+//        it.get()
+//    })
 
     fun addModels(context: Context): List<Any> {
-        return listOf<Any>(WardrobeRepository.initialize(this))
+
+        WardrobeRepository.initialize(context)
+        return listOf<Any>(WardrobeRepository.get())
     }
 
     override fun onCreate() {

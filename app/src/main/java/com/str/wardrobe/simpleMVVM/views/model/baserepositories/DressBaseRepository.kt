@@ -1,5 +1,6 @@
 package com.str.wardrobe.simpleMVVM.views.model.baserepositories
 
+import androidx.lifecycle.LiveData
 import com.str.wardrobe.simpleMVVM.views.model.BaseRepository
 import com.str.wardrobe.simpleMVVM.views.model.entities.NamedDress
 
@@ -11,7 +12,7 @@ interface DressBaseRepository : BaseRepository {
 //    var currentDress: NamedDress
 //
     // Dresses данного Category
-//    var currentDresses: List<NamedDress>
+    var currentDresses: LiveData<List<NamedDress>>?
 
     // All Dresses
 //    var allDresses: List<NamedDress>

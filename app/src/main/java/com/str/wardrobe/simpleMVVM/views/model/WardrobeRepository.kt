@@ -7,54 +7,36 @@ import com.str.wardrobe.simpleMVVM.views.model.baserepositories.CategoryBaseRepo
 import com.str.wardrobe.simpleMVVM.views.model.baserepositories.CategoryListener
 import com.str.wardrobe.simpleMVVM.views.model.baserepositories.DressBaseRepository
 import com.str.wardrobe.simpleMVVM.views.model.baserepositories.DressListener
-import com.str.wardrobe.simpleMVVM.views.model.database.CategoryDatabase
-import com.str.wardrobe.simpleMVVM.views.model.database.DressDatabase
+import com.str.wardrobe.simpleMVVM.views.model.database.WardrobeDatabase
 import com.str.wardrobe.simpleMVVM.views.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.views.model.entities.NamedDress
 
-private const val CATEGORY_DATABASE_NAME="categoryInfo-database"
-private const val DRESS_DATABASE_NAME="dressInfo-database"
+private const val WARDROBE_DATABASE_NAME="wardrobe_database"
 
 class WardrobeRepository (context: Context) : CategoryBaseRepository, DressBaseRepository {
 
     // Destructive migrations are enabled and a prepackaged database
     // is provided.
-    private val categoryDatabase: CategoryDatabase = Room.databaseBuilder(
+    private val wardrobeDatabase: WardrobeDatabase = Room.databaseBuilder(
         context.applicationContext,
-        CategoryDatabase::class.java,
-        CATEGORY_DATABASE_NAME)
-//        .createFromAsset("databases/categoryInfo-database.db")
+        WardrobeDatabase::class.java,
+        WARDROBE_DATABASE_NAME)
+        .createFromAsset("databases/wardrobe_database.db")
         .fallbackToDestructiveMigration()
         .build()
 
-    private val dressDatabase: DressDatabase = Room.databaseBuilder(
-        context.applicationContext,
-        DressDatabase::class.java,
-        DRESS_DATABASE_NAME)
-//        .createFromAsset("databases/dressInfo-database.db")
-        .fallbackToDestructiveMigration()
-        .build()
 
-    private val namedCategoryDao = categoryDatabase.namedCategoryDao()
-    private val namedDressDao = dressDatabase.namedCategoryDao()
+    private val namedCategoryDao = wardrobeDatabase.namedCategoryDao()
+    private val namedDressDao = wardrobeDatabase.namedDressDao()
 
     private val listenersDress = mutableSetOf<DressListener>()
     private val listenersCategory = mutableSetOf<CategoryListener>()
 
-    companion object {
-        private var INSTANCE: WardrobeRepository? = null
+    override var allCategory: LiveData<List<NamedCategory>>? = null
 
-        fun initialize(context: Context) {
-            if(INSTANCE == null) {
-                INSTANCE = WardrobeRepository(context)
-            }
-        }
+    override var currentCategory: NamedCategory? = null
 
-        fun get(): WardrobeRepository {
-            return INSTANCE?:
-            throw IllegalStateException("Авария")
-        }
-    }
+    override var currentDresses: LiveData<List<NamedDress>>? = null
 
     // С файлом [Exceptions] позже постараться реализовать  проверку на ошибки, попытку создать одежду/категорию с названием, которое уже существует
     // Пока не знаю как именно реализовать оное с LiveData
@@ -63,16 +45,15 @@ class WardrobeRepository (context: Context) : CategoryBaseRepository, DressBaseR
         return namedCategoryDao.getDressCategory(name)
     }
 
-    fun getAllCategory(): LiveData<List<NamedCategory?>> {
+    fun getCategories(): LiveData<List<NamedCategory>> {
         return namedCategoryDao.getAllCategory()
     }
 
-    fun getAvailableDresses(): LiveData<List<NamedDress?>> {
+    fun getAvailableDresses(): LiveData<List<NamedDress>> {
         return namedDressDao.getAllDresses()
     }
 
-    fun getDressesOfCategory(category: String?): LiveData<List<NamedDress>> {
-
+    fun getDressesOfCategory(category: String): LiveData<List<NamedDress>> {
         return namedDressDao.getDressesOfCategory(category)
     }
 
@@ -112,5 +93,20 @@ class WardrobeRepository (context: Context) : CategoryBaseRepository, DressBaseR
 
     override fun removeListenerFromDress(listener: DressListener) {
         listenersDress -= listener
+    }
+
+    companion object {
+        private var INSTANCE: WardrobeRepository? = null
+
+        fun initialize(context: Context) {
+            if(INSTANCE == null) {
+                INSTANCE = WardrobeRepository(context)
+            }
+        }
+
+        fun get(): WardrobeRepository {
+            return INSTANCE?:
+            throw IllegalStateException("Авария")
+        }
     }
 }

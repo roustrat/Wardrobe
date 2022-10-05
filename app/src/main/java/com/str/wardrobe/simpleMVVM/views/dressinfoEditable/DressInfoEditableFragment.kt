@@ -2,9 +2,7 @@ package com.str.wardrobe.simpleMVVM.views.dressinfoEditable
 
 import android.nfc.FormatException
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.widget.doOnTextChanged
@@ -74,7 +72,37 @@ class DressInfoEditableFragment : BaseFragment() {
 
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onCreate(savedInstanceState)
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_dress_fragment, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.add_dress -> {
+                if (viewModel.currentDress.name == "") {
+                    dressName.error
+                } else {
+                    if (viewModel.currentDress.description == "") {
+                        dressDescription.error
+                    } else {
+                        viewModel.saveDress()
+                    }
+                }
+                true
+            }
+            R.id.cancel_dress -> {
+                viewModel.closeWithoutSaveDress()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
 
 }

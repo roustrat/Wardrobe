@@ -12,11 +12,11 @@ interface DressDao {
 
     @Transaction
     @Query("SELECT * FROM namedDress")
-    fun getAllDresses(): LiveData<List<NamedDress?>>
+    fun getAllDresses(): LiveData<List<NamedDress>>
 
     @Transaction
     @Query("SELECT * FROM namedDress WHERE category=:category")
-    fun getDressesOfCategory(category: String?): LiveData<List<NamedDress>>
+    fun getDressesOfCategory(category: String): LiveData<List<NamedDress>>
 
     @Transaction
     @Query("SELECT * FROM namedDress WHERE name=:name")
