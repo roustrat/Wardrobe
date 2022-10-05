@@ -7,10 +7,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.widget.doOnTextChanged
 import com.str.wardrobe.R
-import com.str.wardrobe.simpleMVVM.views.base.BaseFragment
-import com.str.wardrobe.simpleMVVM.views.base.BaseScreen
-import com.str.wardrobe.simpleMVVM.views.base.screenViewModel
-import com.str.wardrobe.simpleMVVM.views.model.entities.NamedCategory
+import com.str.foundation.views.BaseFragment
+import com.str.foundation.views.BaseScreen
+import com.str.foundation.views.screenViewModel
+import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 
 class DressInfoEditableFragment : BaseFragment() {
 

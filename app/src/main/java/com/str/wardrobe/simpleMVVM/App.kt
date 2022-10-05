@@ -1,0 +1,24 @@
+package com.str.wardrobe.simpleMVVM
+
+import android.app.Application
+import com.str.foundation.BaseApplication
+import com.str.foundation.model.BaseRepository
+import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
+
+/**
+ * Here we store instances of model layer classes.
+ */
+class App : Application(), BaseApplication {
+
+    /**
+     * Place your repositories here, now we have only 1 repository
+     */
+    override val repositories: List<BaseRepository> = listOf<BaseRepository>(WardrobeRepository.get())
+
+
+    override fun onCreate() {
+        WardrobeRepository.initialize(this)
+        super.onCreate()
+    }
+
+}

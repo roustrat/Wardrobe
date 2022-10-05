@@ -1,15 +1,15 @@
 package com.str.wardrobe.simpleMVVM.views.categorydresses
 
 import android.content.Context
-import com.str.wardrobe.simpleMVVM.views.Navigator
-import com.str.wardrobe.simpleMVVM.views.base.BaseViewModel
+import com.str.foundation.navigator.Navigator
+import com.str.foundation.views.BaseViewModel
 import com.str.wardrobe.simpleMVVM.views.dressInfo.DressInfoFragment
 import com.str.wardrobe.simpleMVVM.views.dressinfoEditable.DressInfoEditableFragment
-import com.str.wardrobe.simpleMVVM.views.model.WardrobeRepository
-import com.str.wardrobe.simpleMVVM.views.model.baserepositories.CategoryListener
-import com.str.wardrobe.simpleMVVM.views.model.baserepositories.DressListener
-import com.str.wardrobe.simpleMVVM.views.model.entities.NamedCategory
-import com.str.wardrobe.simpleMVVM.views.model.entities.NamedDress
+import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
+import com.str.wardrobe.simpleMVVM.model.baserepositories.CategoryListener
+import com.str.wardrobe.simpleMVVM.model.baserepositories.DressListener
+import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
+import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 
 class DressesCategoryViewModel (
     private val navigator: Navigator,

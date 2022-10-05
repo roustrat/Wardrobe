@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.str.wardrobe.R
-import com.str.wardrobe.simpleMVVM.views.model.entities.NamedDress
+import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 
 /**
  * Adapter for displaying the list of available categories

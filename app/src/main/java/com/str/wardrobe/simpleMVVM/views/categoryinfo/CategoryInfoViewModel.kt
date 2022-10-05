@@ -1,11 +1,11 @@
 package com.str.wardrobe.simpleMVVM.views.categoryinfo
 
-import com.str.wardrobe.simpleMVVM.views.Navigator
-import com.str.wardrobe.simpleMVVM.views.UiActions
-import com.str.wardrobe.simpleMVVM.views.base.BaseViewModel
+import com.str.foundation.navigator.Navigator
+import com.str.foundation.uiactions.UiActions
+import com.str.foundation.views.BaseViewModel
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
-import com.str.wardrobe.simpleMVVM.views.model.WardrobeRepository
-import com.str.wardrobe.simpleMVVM.views.model.entities.NamedCategory
+import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
+import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 
 class CategoryInfoViewModel (
     private val navigator: Navigator,
