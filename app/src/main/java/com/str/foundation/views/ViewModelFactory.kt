@@ -5,37 +5,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
 import com.str.foundation.ARG_SCREEN
 import com.str.foundation.BaseApplication
-import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
+import com.str.wardrobe.simpleMVVM.App
 import java.lang.reflect.Constructor
 
 /**
  * Use this method for getting view-models from your fragments
  */
 
-typealias ViewModelCreator<VM> = () -> VM
-
-//class ViewModelFactory<VM : ViewModel>(
-//    private val viewModelCreator: ViewModelCreator<VM>
-//) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        return viewModelCreator() as T
-//    }
-//}
-//
-//inline fun <reified VM : ViewModel> Fragment.viewModelCreator(noinline creator: ViewModelCreator<VM>): Lazy<VM> {
-//    return viewModels { ViewModelFactory(creator) }
-//}
-//
-//inline fun <reified VM : ViewModel> ComponentActivity.viewModelCreator(noinline creator: ViewModelCreator<VM>): Lazy<VM> {
-//    return viewModels { ViewModelFactory(creator) }
-//}
-
 inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<VM> {
-    val application = requireActivity().application as BaseApplication
+    val application = requireActivity().application
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
 
     val activityScopeViewModel = (requireActivity() as FragmentsHolder).getActivityScopeViewModel()
@@ -44,10 +25,16 @@ inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<
     // - singleton scope dependencies (repositories) -> from App class
     // - activity VM scope dependencies -> from MainViewModel
     // - screen VM scope dependencies -> screen args
-//    val dependencies = listOf(screen, mainViewModel) + application.addModels(application.applicationContext)
-    val dependencies = listOf(screen, activityScopeViewModel) + application.repositories
+//    val dependencyRepository = (application as? BaseApplication)?.repositories ?: emptyList()
+    val dependencyRepository = (application as App).repositories1
 
-    // creating factory
+    val dependencies = listOf(screen, activityScopeViewModel) + dependencyRepository
+
+//    //Отчаянная попытка
+//    val dependencyRepository = (application as App).getRepository(application.applicationContext)
+//    val dependencies = listOf(screen, activityScopeViewModel) + dependencyRepository
+
+            // creating factory
     ViewModelFactory(dependencies, this)
 }
 
@@ -86,3 +73,21 @@ class ViewModelFactory(
     }
 
 }
+
+//typealias ViewModelCreator<VM> = () -> VM
+
+//class ViewModelFactory<VM : ViewModel>(
+//    private val viewModelCreator: ViewModelCreator<VM>
+//) : ViewModelProvider.Factory {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        return viewModelCreator() as T
+//    }
+//}
+//
+//inline fun <reified VM : ViewModel> Fragment.viewModelCreator(noinline creator: ViewModelCreator<VM>): Lazy<VM> {
+//    return viewModels { ViewModelFactory(creator) }
+//}
+//
+//inline fun <reified VM : ViewModel> ComponentActivity.viewModelCreator(noinline creator: ViewModelCreator<VM>): Lazy<VM> {
+//    return viewModels { ViewModelFactory(creator) }
+//}

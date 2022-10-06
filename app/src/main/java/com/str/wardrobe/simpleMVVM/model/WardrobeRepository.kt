@@ -40,7 +40,7 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
 
         override var currentDresses: LiveData<List<NamedDress>>? = null
 
-        // С файлом [Exceptions] позже постараться реализовать проверку на ошибки, попытку создать одежду/категорию с названием, которое уже существует
+        // С файлом [Exceptions] позже постараться реализовать  проверку на ошибки, попытку создать одежду/категорию с названием, которое уже существует
         // Пока не знаю как именно реализовать оное с LiveData
 
         fun getCategoryByName(name: String): LiveData<NamedCategory> {
