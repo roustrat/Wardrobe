@@ -8,14 +8,14 @@ typealias DressListener = (NamedDress) -> Unit
 
 interface DressBaseRepository : BaseRepository {
 
-//    // Данный Dress
-//    var currentDress: NamedDress
-//
+    // Данный Dress
+//    var currentDress: NamedDress?
+
     // Dresses данного Category
-    var currentDresses: LiveData<List<NamedDress>>?
+//    var currentDresses: LiveData<List<NamedDress>>?
 
     // All Dresses
-//    var allDresses: List<NamedDress>
+    var allDresses: List<NamedDress>?
 
 //    /**
 //     * Get the list of all available dresses that may be chosen by the user.

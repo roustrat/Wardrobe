@@ -1,6 +1,7 @@
 package com.str.wardrobe.simpleMVVM.views.categorydresses
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import com.str.foundation.navigator.Navigator
 import com.str.foundation.views.BaseViewModel
 import com.str.wardrobe.simpleMVVM.views.dressInfo.DressInfoFragment
@@ -12,24 +13,30 @@ import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 
 class DressesCategoryViewModel (
-    private val navigator: Navigator,
-    private val repository: WardrobeRepository
+    private val navigator: Navigator
         ) : BaseViewModel(), CategoriesAdapter.Listener, DressesAdapter.Listener {
 
+
+    private val repositoryPublic: WardrobeRepository = WardrobeRepository.get()
     // Надо подумать как сделать их private
-    val repositoryPublic: WardrobeRepository = this.repository
+    var allCategory : LiveData<List<NamedCategory>> = repositoryPublic.getCategories()
+    var currentCategory : NamedCategory? = null
+    var allDresses : LiveData<List<NamedDress>> = repositoryPublic.getAvailableDresses()
+    var currentDresses : List<NamedDress> = emptyList()
+    var currentDress : NamedDress? = null
+//    repositoryPublic.addListenerToCategory(categoryListener, repositoryPublic.currentCategory!!)
+//    repositoryPublic.addListenerToDress(dressListener, repositoryPublic.currentDress!!)
+
 
     // Current Category
     // Возможен конфликт между этими асинхронными задачачи, соответственно краш благодаря !!
     // Нормально реализовать current значения. В репозитории они уже есть. Возможно туда этот код кинуть, но без инстанса репы что делать там??
     // Нужно ли реализовать mergeSources из примера?
 
-    var currentDress : NamedDress = repositoryPublic.currentDresses?.value!!.first()
-
     private val categoryListener : CategoryListener = {
-        repositoryPublic.currentCategory = it
+        currentCategory = it
         // Точно не то, нужно чтобы при смещении фокуса менял
-        repositoryPublic.currentDresses = repositoryPublic.getDressesOfCategory(it.name)
+        currentDresses = allDresses.value?.takeWhile { it.category == currentCategory?.name } ?: emptyList()
     }
 
     private val dressListener : DressListener = {
@@ -40,13 +47,13 @@ class DressesCategoryViewModel (
 
 
     init {
-        mergeSources()
-        repositoryPublic.addListenerToCategory(categoryListener, repositoryPublic.currentCategory!!)
-        repositoryPublic.addListenerToDress(dressListener, currentDress)
+
+//        mergeSources()
+
     }
 
     fun addDress(context: Context) {
-        val screen = DressInfoEditableFragment.Screen(repository.currentCategory as NamedCategory)
+        val screen = DressInfoEditableFragment.Screen(currentCategory as NamedCategory)
         navigator.launch(screen)
 
     }
@@ -60,14 +67,12 @@ class DressesCategoryViewModel (
     }
 
     override fun onCategoryChosen(namedCategory: NamedCategory) {
-        repositoryPublic.currentCategory = namedCategory
+        currentCategory = namedCategory
     }
 
     private fun mergeSources() {
+        allCategory = repositoryPublic.getCategories()
 
-        repositoryPublic.allCategory = repositoryPublic.getCategories()
-        repositoryPublic.currentCategory =  repositoryPublic.allCategory!!.value!!.first()
-        repositoryPublic.currentDresses = repositoryPublic.getDressesOfCategory(repositoryPublic.currentCategory!!.name)
     }
 
 

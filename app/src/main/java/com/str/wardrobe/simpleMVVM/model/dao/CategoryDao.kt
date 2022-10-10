@@ -19,11 +19,19 @@ interface CategoryDao {
     fun getAllCategory(): LiveData<List<NamedCategory>>
 
     @Transaction
+    @Query("SELECT name FROM namedCategory")
+    fun getAllCategoryNames(): LiveData<List<String>>
+
+    @Transaction
     @Insert
     fun addCategory(category: NamedCategory)
 
     @Transaction
     @Update
     fun updateCategory(category: NamedCategory)
+
+    @Transaction
+    @Delete
+    fun deleteCategory(category: NamedCategory)
 
 }

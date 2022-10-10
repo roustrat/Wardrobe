@@ -5,24 +5,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditText
-        android:id="@+id/nameOfCategory_edit"
+        android:id="@+id/nameOfDress_edit"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_margin="40dp"
-        app:layout_constraintBottom_toTopOf="@id/descriptionOfCategory_edit"
+        app:layout_constraintBottom_toTopOf="@id/descriptionOfDress_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/descriptionOfCategory_edit"
+        android:id="@+id/descriptionOfDress_edit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameOfCategory_edit"
+        app:layout_constraintTop_toBottomOf="@id/nameOfDress_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

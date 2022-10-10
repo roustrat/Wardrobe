@@ -3,6 +3,7 @@ package com.str.wardrobe.simpleMVVM.views.categorydresses
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.str.wardrobe.R
@@ -10,6 +11,7 @@ import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
+import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 
 class DressesCategoryFragment : BaseFragment() {
 
@@ -27,15 +29,24 @@ class DressesCategoryFragment : BaseFragment() {
         val adapterDress = DressesAdapter(viewModel)
         setupLayoutManager(binding, adapterCategory, adapterDress)
 
-        viewModel.repositoryPublic.allCategory?.observe(viewLifecycleOwner) {
+        viewModel.allCategory.observe(viewLifecycleOwner) {
             adapterCategory.items = it as List<NamedCategory>
-            viewModel.repositoryPublic.currentCategory = it.first()
-
+            if (it != null) {
+                if (viewModel.currentDress == null) {
+                    viewModel.currentCategory = it.first()
+                }
+            }
+            Toast.makeText(requireContext(), "Observe", Toast.LENGTH_SHORT).show()
         }
 
-        viewModel.repositoryPublic.currentDresses?.observe(viewLifecycleOwner) {
-            adapterDress.items = it
-            viewModel.currentDress = it.first()
+        // Надо проверить необходимость
+        viewModel.allDresses.observe(viewLifecycleOwner) { it1 ->
+            viewModel.currentDresses = it1.takeWhile { it.category == viewModel.currentCategory?.name }
+            adapterDress.items = viewModel.currentDresses
+            if (viewModel.currentDresses.isNotEmpty()) {
+                viewModel.currentDress = viewModel.currentDresses.first()
+            }
+
         }
 
 
@@ -47,6 +58,10 @@ class DressesCategoryFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         addButton = view.findViewById(R.id.newDressItem)
+
+        addButton.setOnClickListener {
+            viewModel.addDress(requireContext())
+        }
 
     }
 

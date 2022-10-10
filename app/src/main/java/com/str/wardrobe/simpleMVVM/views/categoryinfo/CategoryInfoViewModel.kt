@@ -13,6 +13,8 @@ class CategoryInfoViewModel (
     private val repository: WardrobeRepository
 ) : BaseViewModel() {
 
+    private val repositoryPublic: WardrobeRepository = WardrobeRepository.get()
+
     val currentCategory: NamedCategory = NamedCategory("", "")
 
     fun setCategoryName(name: String) {
@@ -24,8 +26,7 @@ class CategoryInfoViewModel (
     }
 
     fun saveCategory() {
-        repository.addCategory(currentCategory)
-        repository.allCategory = repository.getCategories()
+        repositoryPublic.addCategory(currentCategory)
         val screen = DressesCategoryFragment.Screen()
         navigator.launch(screen)
     }

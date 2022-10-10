@@ -30,4 +30,11 @@ interface DressDao {
     @Update
     fun updateDress(dress: NamedDress)
 
+    @Transaction
+    @Delete
+    fun deleteDress(dress: NamedDress)
+
+    @Transaction
+    @Delete
+    fun deleteDresses(dresses: List<NamedDress>)
 }

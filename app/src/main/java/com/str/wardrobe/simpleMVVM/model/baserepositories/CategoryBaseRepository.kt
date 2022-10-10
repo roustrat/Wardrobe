@@ -11,7 +11,7 @@ interface CategoryBaseRepository: BaseRepository {
 
     var allCategory: LiveData<List<NamedCategory>>?
 //
-    var currentCategory: NamedCategory?
+//    var currentCategory: NamedCategory?
 
 //    /**
 //     * Get the category content by its name
@@ -28,18 +28,5 @@ interface CategoryBaseRepository: BaseRepository {
      * Stop listening for the current category changes
      */
     fun removeListenerFromCategory(listener: CategoryListener)
-
-    var currentDresses: LiveData<List<NamedDress>>?
-
-    /**
-     * Listen for the current dress changes.
-     * The listener is triggered immediately with the current value when calling this method.
-     */
-    fun addListenerToDress(listener: DressListener, dress: NamedDress)
-
-    /**
-     * Stop listening for the current dress changes
-     */
-    fun removeListenerFromDress(listener: DressListener)
 
 }

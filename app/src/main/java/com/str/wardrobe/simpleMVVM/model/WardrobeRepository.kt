@@ -10,6 +10,7 @@ import com.str.wardrobe.simpleMVVM.model.baserepositories.DressListener
 import com.str.wardrobe.simpleMVVM.model.database.WardrobeDatabase
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
+import java.util.concurrent.Executors
 
 private const val WARDROBE_DATABASE_NAME="wardrobe_database"
 
@@ -19,7 +20,7 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
     // is provided.
     private val wardrobeDatabase: WardrobeDatabase by lazy<WardrobeDatabase> {
         Room.databaseBuilder(
-            context.applicationContext,
+            context,
             WardrobeDatabase::class.java,
             WARDROBE_DATABASE_NAME
         )
@@ -31,14 +32,10 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
         private val namedCategoryDao = wardrobeDatabase.namedCategoryDao()
         private val namedDressDao = wardrobeDatabase.namedDressDao()
 
+        private val executor = Executors.newSingleThreadExecutor()
+
         private val listenersDress = mutableSetOf<DressListener>()
         private val listenersCategory = mutableSetOf<CategoryListener>()
-
-        override var allCategory: LiveData<List<NamedCategory>>? = null
-
-        override var currentCategory: NamedCategory? = null
-
-        override var currentDresses: LiveData<List<NamedDress>>? = null
 
         // С файлом [Exceptions] позже постараться реализовать  проверку на ошибки, попытку создать одежду/категорию с названием, которое уже существует
         // Пока не знаю как именно реализовать оное с LiveData
@@ -49,6 +46,10 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
 
         fun getCategories(): LiveData<List<NamedCategory>> {
             return namedCategoryDao.getAllCategory()
+        }
+
+        fun getCategoriesName(): LiveData<List<String>> {
+            return namedCategoryDao.getAllCategoryNames()
         }
 
         fun getAvailableDresses(): LiveData<List<NamedDress>> {
@@ -68,18 +69,43 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
         }
 
         fun addDress(dress: NamedDress) {
-            namedDressDao.addDress(dress)
+            executor.execute {
+                namedDressDao.addDress(dress)
+            }
         }
 
         fun updateCategory(category: NamedCategory) {
-            namedCategoryDao.updateCategory(category)
+            executor.execute {
+                namedCategoryDao.updateCategory(category)
+            }
+
         }
 
         fun updateDress(dress: NamedDress) {
             namedDressDao.updateDress(dress)
         }
 
-        override fun addListenerToCategory(listener: CategoryListener, category: NamedCategory) {
+        fun deleteCategory(category: NamedCategory) {
+            namedCategoryDao.deleteCategory(category)
+        }
+
+        fun deleteDress(dress: NamedDress) {
+            namedDressDao.deleteDress(dress)
+        }
+
+        fun deleteDresses(dresses: List<NamedDress>) {
+            namedDressDao.deleteDresses(dresses)
+        }
+
+    override var allCategory: LiveData<List<NamedCategory>>? = null
+        set(value) {
+            if (field != value) {
+                field = value
+                listenersCategory.forEach { it(value.value) }
+            }
+        }
+
+    override fun addListenerToCategory(listener: CategoryListener, category: NamedCategory) {
             listenersCategory += listener
             listener(category)
         }
@@ -88,7 +114,11 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
             listenersCategory -= listener
         }
 
-        override fun addListenerToDress(listener: DressListener, dress: NamedDress) {
+    override var allDresses: List<NamedDress>?
+        get() = TODO("Not yet implemented")
+        set(value) {}
+
+    override fun addListenerToDress(listener: DressListener, dress: NamedDress) {
             listenersDress += listener
             listener(dress)
         }
