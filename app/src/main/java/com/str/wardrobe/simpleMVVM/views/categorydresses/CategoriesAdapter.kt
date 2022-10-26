@@ -15,7 +15,7 @@ import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 
 class CategoriesAdapter (
     private val listener: Listener
-):  RecyclerView.Adapter<CategoriesAdapter.Holder>(), View.OnClickListener{
+):  RecyclerView.Adapter<CategoriesAdapter.Holder>(), View.OnClickListener, View.OnFocusChangeListener{
 
     var items: List<NamedCategory> = emptyList()
         set(value) {
@@ -23,10 +23,16 @@ class CategoriesAdapter (
             notifyDataSetChanged()
         }
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Holder(
+        itemView: View
+    ) : RecyclerView.ViewHolder(itemView) {
         val categoryNameTextView: TextView = itemView.findViewById(R.id.categoryNameTextView)
         val categoryDescriptionTextView: TextView = itemView.findViewById(R.id.categoryDescriptionTextView)
     }
+
+//    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+////
+//    }
 
     interface Listener {
         /**
@@ -34,6 +40,8 @@ class CategoriesAdapter (
          * @param namedCategory category chosen by the user
          */
         fun onCategoryChosen(namedCategory: NamedCategory)
+        // Попытаться разделить на другой интерфейс
+        fun onCategoryFocused(namedCategory: NamedCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -46,6 +54,7 @@ class CategoriesAdapter (
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val namedCategory = items[position]
         with(holder) {
+            this.itemView.tag = namedCategory
             this.categoryNameTextView.text = namedCategory.name
             this.categoryDescriptionTextView.text = namedCategory.description
         }
@@ -55,6 +64,17 @@ class CategoriesAdapter (
 
     override fun onClick(p0: View) {
         val item = p0.tag as NamedCategory
-        listener.onCategoryChosen(item)
+        if (item != null) {
+            listener.onCategoryChosen(item)
+        }
+    }
+
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        val item = v?.tag as NamedCategory
+        if (hasFocus) {
+            if (item != null) {
+                listener.onCategoryFocused(item)
+            }
+        }
     }
 }

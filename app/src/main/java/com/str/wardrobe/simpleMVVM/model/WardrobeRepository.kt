@@ -3,18 +3,16 @@ package com.str.wardrobe.simpleMVVM.model
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
-import com.str.wardrobe.simpleMVVM.model.baserepositories.CategoryBaseRepository
-import com.str.wardrobe.simpleMVVM.model.baserepositories.CategoryListener
-import com.str.wardrobe.simpleMVVM.model.baserepositories.DressBaseRepository
-import com.str.wardrobe.simpleMVVM.model.baserepositories.DressListener
+import com.str.wardrobe.simpleMVVM.model.baserepositories.*
 import com.str.wardrobe.simpleMVVM.model.database.WardrobeDatabase
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
+import java.io.File
 import java.util.concurrent.Executors
 
 private const val WARDROBE_DATABASE_NAME="wardrobe_database"
 
-class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRepository {
+class WardrobeRepository(context: Context) : WardrobeBaseRepository {
 
     // Destructive migrations are enabled and a prepackaged database
     // is provided.
@@ -33,6 +31,7 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
         private val namedDressDao = wardrobeDatabase.namedDressDao()
 
         private val executor = Executors.newSingleThreadExecutor()
+        private val filesDir = context.applicationContext.filesDir
 
         private val listenersDress = mutableSetOf<DressListener>()
         private val listenersCategory = mutableSetOf<CategoryListener>()
@@ -64,8 +63,14 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
             return namedDressDao.getDress(name)
         }
 
+        fun getDressById(id: Int): LiveData<NamedDress> {
+            return namedDressDao.getDressOfId(id)
+        }
+
         fun addCategory(category: NamedCategory) {
-            namedCategoryDao.addCategory(category)
+            executor.execute {
+                namedCategoryDao.addCategory(category)
+            }
         }
 
         fun addDress(dress: NamedDress) {
@@ -97,27 +102,39 @@ class WardrobeRepository(context: Context) : CategoryBaseRepository, DressBaseRe
             namedDressDao.deleteDresses(dresses)
         }
 
-    override var allCategory: LiveData<List<NamedCategory>>? = null
+    override var allCategory: LiveData<List<NamedCategory>> = getCategories()
         set(value) {
             if (field != value) {
                 field = value
-                listenersCategory.forEach { it(value.value) }
+                listenersCategory.forEachIndexed { index, _ ->
+                   (value.value?.get(index))
+                }
             }
         }
 
-    override fun addListenerToCategory(listener: CategoryListener, category: NamedCategory) {
-            listenersCategory += listener
-            listener(category)
+    // Избавиться от этих двух
+    override fun addListenerToCategory(listeners: CategoriesListener) {
+        listenersCategory += (listeners) as MutableSet<CategoryListener>
+        allCategory.value?.let { listeners(it) }
         }
 
-        override fun removeListenerFromCategory(listener: CategoryListener) {
-            listenersCategory -= listener
+    override fun removeListenerFromCategory(listeners: CategoriesListener) {
+        listenersCategory -= (listeners) as MutableSet<CategoryListener>
+    }
+
+    override var allDresses: LiveData<List<NamedDress>>? = getAvailableDresses()
+        set(value) {
+            if (field != value) {
+                field = value
+                listenersCategory.forEachIndexed { index, _ ->
+                    (value!!.value?.get(index))
+                }
+            }
         }
 
-    override var allDresses: List<NamedDress>?
-        get() = TODO("Not yet implemented")
-        set(value) {}
+    fun getPhotoFile(dress: NamedDress): File = File(filesDir, dress.photoFileName)
 
+    // Избавиться от этих двух
     override fun addListenerToDress(listener: DressListener, dress: NamedDress) {
             listenersDress += listener
             listener(dress)

@@ -19,6 +19,10 @@ interface DressDao {
     fun getDressesOfCategory(category: String): LiveData<List<NamedDress>>
 
     @Transaction
+    @Query("SELECT * FROM namedDress WHERE id=(:id)")
+    fun getDressOfId(id: Int): LiveData<NamedDress>
+
+    @Transaction
     @Query("SELECT * FROM namedDress WHERE name=:name")
     fun getDress(name: String): LiveData<NamedDress>
 

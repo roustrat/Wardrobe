@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.str.wardrobe.R
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
@@ -17,7 +19,9 @@ class CategoryInfoFragment : BaseFragment() {
 
     override val viewModel by screenViewModel<CategoryInfoViewModel>()
 
-    private lateinit var categoryName: EditText
+    private lateinit var categoryNameInput: TextInputLayout
+    private lateinit var categoryNameEdit: TextInputEditText
+
     private lateinit var categoryDescription: EditText
 
     override fun onCreateView(
@@ -25,63 +29,31 @@ class CategoryInfoFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.category_info, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        categoryName = view.findViewById(R.id.nameOfDress_edit)
+        categoryNameInput = view.findViewById(R.id.nameOfDress_input)
+        categoryNameEdit = view.findViewById(R.id.nameOfDress_edit)
+
         categoryDescription = view.findViewById(R.id.descriptionOfDress_edit)
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_category_fragment, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.add_category -> {
-                if (viewModel.currentCategory.name == "") {
-                    categoryName.error
-                } else {
-                    if (viewModel.currentCategory.description == "") {
-                        categoryDescription.error
-                    } else {
-                        viewModel.saveCategory()
-                    }
-                }
-                true
-            }
-            R.id.cancel_category -> {
-                viewModel.closeWithoutSaveCategory()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onStart() {
-
+        super.onStart()
         // Определение EditText названия категории
-        categoryName.doOnTextChanged { text, start, before, count ->
+        categoryNameEdit.doOnTextChanged { text, _, _, _ ->
             try {
                 if (text != null) {
                     viewModel.setCategoryName(text.toString())
                 } else {
-                    categoryName.error = null
+                    categoryNameEdit.error = null
                 }
 
-            } catch (_: FormatException) {
+            } catch (_: Exception) {
 
             }
         }
@@ -99,7 +71,37 @@ class CategoryInfoFragment : BaseFragment() {
 
             }
         }
+    }
 
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_category_fragment, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.add_category -> {
+                if (viewModel.currentCategory.name == "") {
+                    categoryNameEdit.error
+                } else {
+                    if (viewModel.currentCategory.description == "") {
+                        categoryDescription.error
+                    } else {
+                        viewModel.saveCategory()
+                    }
+                }
+                true
+            }
+            R.id.cancel_category -> {
+                viewModel.closeWithoutSaveCategory()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

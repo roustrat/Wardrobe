@@ -16,4 +16,7 @@ data class NamedDress(
     @ColumnInfo(name = "category") var category: String,
     @ColumnInfo(name = "id", collate = ColumnInfo.NOCASE) var imgId: Int,
     @ColumnInfo(name = "description") var description: String
-)
+) {
+    val photoFileName
+    get() = "IMG_$imgId.jpg"
+}

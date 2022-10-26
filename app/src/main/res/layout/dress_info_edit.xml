@@ -12,11 +12,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/nameOfDress_edit"
+        app:layout_constraintBottom_toTopOf="@id/nameOfDress_input"
         android:src="@drawable/empty_photo"/>
 
     <EditText
-        android:id="@+id/nameOfDress_edit"
+        android:id="@+id/nameOfDress_input"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginStart="40dp"
@@ -40,7 +40,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameOfDress_edit"
+        app:layout_constraintTop_toBottomOf="@id/nameOfDress_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/descriptionOfDress_edit"/>
 

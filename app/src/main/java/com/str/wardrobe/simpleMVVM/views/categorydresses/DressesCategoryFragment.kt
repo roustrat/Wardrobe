@@ -27,28 +27,35 @@ class DressesCategoryFragment : BaseFragment() {
 
         val adapterCategory = CategoriesAdapter(viewModel)
         val adapterDress = DressesAdapter(viewModel)
-        setupLayoutManager(binding, adapterCategory, adapterDress)
+        setupCategoryLayoutManager(binding, adapterCategory)
+        setupDressLayoutManager(binding, adapterDress)
 
         viewModel.allCategory.observe(viewLifecycleOwner) {
             adapterCategory.items = it as List<NamedCategory>
             if (it != null) {
                 if (viewModel.currentDress == null) {
-                    viewModel.currentCategory = it.first()
+                    viewModel.currentCategory.value = it.first()
+                    viewModel.currentDresses = viewModel.updateCurrentDressesValue()
                 }
             }
-            Toast.makeText(requireContext(), "Observe", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Все", Toast.LENGTH_SHORT).show()
         }
 
-        // Надо проверить необходимость
-        viewModel.allDresses.observe(viewLifecycleOwner) { it1 ->
-            viewModel.currentDresses = it1.takeWhile { it.category == viewModel.currentCategory?.name }
-            adapterDress.items = viewModel.currentDresses
-            if (viewModel.currentDresses.isNotEmpty()) {
-                viewModel.currentDress = viewModel.currentDresses.first()
+        viewModel.currentCategory.observe(viewLifecycleOwner) {
+//            if(it != null) {
+//                viewModel.currentDresses.value = viewModel.allDresses.value.takeIf { it1: List<NamedDress>? -> it1 == it}
+//            }
+            Toast.makeText(requireContext(), "${viewModel.currentCategory.value?.name}", Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.currentDresses.observe(viewLifecycleOwner) {
+            if (it != null) {
+                if (it.isNotEmpty()) {
+                    adapterDress.items = it
+                    viewModel.currentDress = it.first()
+                }
             }
-
         }
-
 
         return binding
     }
@@ -65,10 +72,8 @@ class DressesCategoryFragment : BaseFragment() {
 
     }
 
-    private fun setupLayoutManager(binding: View, adapter1: CategoriesAdapter, adapter2: DressesAdapter) {
-        // waiting for list width
+    private fun setupCategoryLayoutManager(binding: View, adapter: CategoriesAdapter) {
         val categoriesRecyclerView = binding.findViewById<RecyclerView>(R.id.categoriesRecyclerView)
-        val dressesRecyclerView = binding.findViewById<RecyclerView>(R.id.dressesRecyclerView)
 
         categoriesRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -76,10 +81,14 @@ class DressesCategoryFragment : BaseFragment() {
 //                val width = categoriesRecyclerView.width
 //                val itemWidth = resources.getDimensionPixelSize(R.dimen.item_width)
 //                val columns = width / itemWidth
-                categoriesRecyclerView.adapter = adapter1
+                categoriesRecyclerView.adapter = adapter
                 categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
         })
+    }
+
+    private fun setupDressLayoutManager(binding: View, adapter: DressesAdapter) {
+        val dressesRecyclerView = binding.findViewById<RecyclerView>(R.id.dressesRecyclerView)
 
         dressesRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -87,7 +96,7 @@ class DressesCategoryFragment : BaseFragment() {
 //                val width = categoriesRecyclerView.width
 //                val itemWidth = resources.getDimensionPixelSize(R.dimen.item_width)
 //                val columns = width / itemWidth
-                dressesRecyclerView.adapter = adapter2
+                dressesRecyclerView.adapter = adapter
                 dressesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         })

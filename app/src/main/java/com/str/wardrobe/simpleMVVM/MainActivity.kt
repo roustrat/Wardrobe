@@ -5,9 +5,12 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.str.foundation.ARG_SCREEN
 import com.str.foundation.ActivityScopeViewModel
 import com.str.foundation.navigator.IntermediateNavigator
 import com.str.foundation.navigator.StackFragmentNavigator
@@ -16,6 +19,7 @@ import com.str.foundation.utils.viewModelCreator
 import com.str.foundation.views.FragmentsHolder
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
+import com.str.wardrobe.simpleMVVM.views.categoryinfo.CategoryInfoFragment
 
 
 class MainActivity : AppCompatActivity(), FragmentsHolder {
@@ -84,6 +88,23 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
                     true
                 }
                 R.id.nav_new_category -> {
+                    this.drawerLayout.closeDrawer(GravityCompat.START)
+                    val screen = CategoryInfoFragment.Screen()
+                    // as screen classes are inside fragments -> we can create fragment directly from screen
+                    val fragment = screen.javaClass.enclosingClass.newInstance() as Fragment
+                    // set screen object as fragment's argument
+                    fragment.arguments = bundleOf(ARG_SCREEN to screen)
+
+                    val transaction = this.supportFragmentManager.beginTransaction()
+                    transaction
+                        .setCustomAnimations(
+                            R.anim.enter,
+                            R.anim.exit,
+                            R.anim.pop_enter,
+                            R.anim.pop_exit
+                        )
+                        .replace(R.id.fragmentContainer, fragment)
+                        .commit()
                     Toast.makeText(this, "New category", Toast.LENGTH_SHORT).show()
                     true
                 }
