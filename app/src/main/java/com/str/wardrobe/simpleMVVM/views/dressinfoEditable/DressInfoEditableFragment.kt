@@ -1,29 +1,35 @@
 package com.str.wardrobe.simpleMVVM.views.dressinfoEditable
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.nfc.FormatException
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
+import com.str.foundation.utils.getScaledBitmap
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
+import java.io.File
+import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
 // Позже надо перейти к единому фрагменту и для просмотра, и для редактирования. Сам dress сделав тут LiveData и реализовывая как в книге
-
-//private const val REQUEST_PHOTO = 1
 
 class DressInfoEditableFragment : BaseFragment() {
 
@@ -33,36 +39,6 @@ class DressInfoEditableFragment : BaseFragment() {
     ): BaseScreen
 
     override val viewModel by screenViewModel<DressInfoEditableViewModel>()
-
-    override fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener(Runnable {
-            val cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build()
-                .also {
-                    it.setSurfaceProvider()
-                }
-        },
-        ContextCompat.getMainExecutor(requireContext()))
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == PERMISSION_CODE) {
-            if (allPermissionGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(requireContext(), "Permission error", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private lateinit var cameraExecutor: ExecutorService
 
     private lateinit var dressImage: ImageView
     private lateinit var dressName: EditText
@@ -80,17 +56,6 @@ class DressInfoEditableFragment : BaseFragment() {
 
         }
 
-        viewModel.currentDress.observe(viewLifecycleOwner) { it ->
-            it?.let {
-                viewModel.photoFile = viewModel.getPhotoFile(it)
-                viewModel.photoUri = FileProvider.getUriForFile(requireActivity(),
-                    "com.str.wardrobe.file-provider",
-                    viewModel.photoFile)
-//                updatePhotoView()
-            }
-            Toast.makeText(requireContext(), "$it", Toast.LENGTH_SHORT).show()
-        }
-
         return inflater.inflate(R.layout.dress_info_edit, container, false)
     }
 
@@ -100,8 +65,10 @@ class DressInfoEditableFragment : BaseFragment() {
         dressName = view.findViewById(R.id.nameOfDress_input)
         dressDescription = view.findViewById(R.id.descriptionOfDress_edit)
 
-        val randomId: Int = Random.nextInt(1, 100)
-        viewModel.loadDress(randomId)
+        viewModel.loadDress()
+        viewModel.photoUri = FileProvider.getUriForFile(requireActivity(),
+            "com.str.wardrobe.file-provider",
+            viewModel.photoFile)
 
         // Определение Spinner выбора единицы измерения напряжения
         categoryChooseSpin = view.findViewById(R.id.category_choose_spin)
@@ -135,6 +102,7 @@ class DressInfoEditableFragment : BaseFragment() {
             try {
                 if (text != null) {
                     viewModel.setDressName(text.toString())
+                    viewModel.updateDB()
                 } else {
                     dressName.error = null
                 }
@@ -144,11 +112,12 @@ class DressInfoEditableFragment : BaseFragment() {
             }
         }
 
-        // Определение EditText названия одежды
+        // Определение EditText описания одежды
         dressDescription.doOnTextChanged { text, start, before, count ->
             try {
                 if (text != null) {
                     viewModel.setDressDescription(text.toString())
+                    viewModel.updateDB()
                 } else {
                     dressName.error = null
                 }
@@ -161,9 +130,10 @@ class DressInfoEditableFragment : BaseFragment() {
         // Определение слушателя для Spinner выбора категории
         categoryChooseSpin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                if (viewModel.currentDress.value != null) {
-                    viewModel.currentDress.value!!.category =
+                if (viewModel.currentDress != null) {
+                    viewModel.currentDress!!.category =
                         categoryChooseSpin.adapter.getItem(pos).toString()
+                    viewModel.updateDB()
                 }
             }
 
@@ -174,66 +144,22 @@ class DressInfoEditableFragment : BaseFragment() {
 
         dressImage.apply {
 
-
-//            val packageManager: PackageManager = requireActivity().packageManager
-//            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//            val resolvedActivity: ResolveInfo? =
-//                packageManager.resolveActivity(captureImage,
-//                    PackageManager.MATCH_DEFAULT_ONLY)
-//            if (resolvedActivity == null) {
-//                isEnabled = false
-//            }
-
+//
             setOnClickListener {
-                if (allPermissionGranted()) {
-                    startCamera()
-                } else {
 
-                    // Запрос разрешения на использование. В данном случаи камеры
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
-                        PERMISSION,
-                        PERMISSION_CODE
-                    )
+                if (viewModel.currentDress != null) {
+                    viewModel.goToPhoto()
                 }
 
-                cameraExecutor = Executors.newSingleThreadExecutor()
-
-//                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, viewModel.photoUri)
-//                val cameraActivities: List<ResolveInfo> =
-//                    packageManager.queryIntentActivities(captureImage,
-//                        PackageManager.MATCH_DEFAULT_ONLY)
-//                for (cameraActivity in cameraActivities) {
-//                    requireActivity().grantUriPermission(
-//                        cameraActivity.activityInfo.packageName,
-//                        viewModel.photoUri,
-//                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-//                }
-//                takePicture.launch(viewModel.photoUri)
             }
         }
     }
 
-//    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
-//        if (success) {
-//            // The image was saved into the given Uri -> do something with it
-//            Log.d (TAG, "We took a picture...")
-//            updatePhotoView()    // You'll need this later for listing 16.16
-//        }
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         val randomId: Int = Random.nextInt(1, 100)
-        viewModel.loadDress(randomId)
+        viewModel.loadDress()
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        cameraExecutor.shutdown()
-//        requireActivity().revokeUriPermission(viewModel.photoUri,
-//            Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -244,10 +170,10 @@ class DressInfoEditableFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dress -> {
-                if (viewModel.currentDress.value!!.name == "") {
+                if (viewModel.currentDress!!.name == "") {
                     dressName.error
                 } else {
-                    if (viewModel.currentDress.value!!.description == "") {
+                    if (viewModel.currentDress!!.description == "") {
                         dressDescription.error
                     } else {
                         viewModel.saveDress()
@@ -263,22 +189,24 @@ class DressInfoEditableFragment : BaseFragment() {
         }
     }
 
-//    private fun updatePhotoView() {
-//        if (viewModel.photoFile.exists()) {
-//            val bitmap = getScaledBitmap(viewModel.photoFile.path, requireActivity())
-//            dressImage.setImageBitmap(bitmap)
-//        } else {
-//            dressImage.setImageDrawable(null)
-//        }
-//    }
-
-    private fun allPermissionGranted() = PERMISSION.all {
-        ContextCompat.checkSelfPermission(requireActivity().baseContext, it) == PackageManager.PERMISSION_GRANTED
+    private fun updatePhotoView() {
+        if (viewModel.photoFile.exists()) {
+            val bitmap = getScaledBitmap(viewModel.photoFile.path, requireActivity())
+            dressImage.setImageBitmap(bitmap)
+        } else {
+            dressImage.setImageResource(R.drawable.empty_photo)
+        }
     }
 
-    companion object {
-        private const val PERMISSION_CODE = 10
-        private val PERMISSION = arrayOf(Manifest.permission.CAMERA)
+
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onResume() {
+        updatePhotoView()
+        super.onResume()
     }
 
 

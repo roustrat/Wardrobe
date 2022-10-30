@@ -18,6 +18,4 @@ abstract class BaseFragment : Fragment() {
         (requireActivity() as FragmentsHolder).notifyScreenUpdates()
     }
 
-    abstract fun startCamera()
-
 }

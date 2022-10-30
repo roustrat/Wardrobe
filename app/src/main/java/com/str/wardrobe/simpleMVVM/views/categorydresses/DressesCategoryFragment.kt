@@ -26,7 +26,7 @@ class DressesCategoryFragment : BaseFragment() {
         val binding =  inflater.inflate(R.layout.dresses_category, container, false)
 
         val adapterCategory = CategoriesAdapter(viewModel)
-        val adapterDress = DressesAdapter(viewModel)
+        val adapterDress = DressesAdapter(viewModel, requireContext(), requireActivity())
         setupCategoryLayoutManager(binding, adapterCategory)
         setupDressLayoutManager(binding, adapterDress)
 

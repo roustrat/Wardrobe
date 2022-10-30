@@ -87,7 +87,9 @@ class WardrobeRepository(context: Context) : WardrobeBaseRepository {
         }
 
         fun updateDress(dress: NamedDress) {
-            namedDressDao.updateDress(dress)
+            executor.execute {
+                namedDressDao.updateDress(dress)
+            }
         }
 
         fun deleteCategory(category: NamedCategory) {

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2657c555dcd2ec1526c53c60e2c7fb7a",
+    "identityHash": "80d694eacf23df2940b636aeafb547ff",
     "entities": [
       {
         "tableName": "namedCategory",
@@ -42,7 +42,7 @@
       },
       {
         "tableName": "namedDress",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `category` TEXT NOT NULL, `id` INTEGER NOT NULL COLLATE NOCASE, `description` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `category` TEXT NOT NULL, `id` TEXT NOT NULL COLLATE NOCASE, `description` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -59,7 +59,7 @@
           {
             "fieldPath": "imgId",
             "columnName": "id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -92,7 +92,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2657c555dcd2ec1526c53c60e2c7fb7a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '80d694eacf23df2940b636aeafb547ff')"
     ]
   }
 }
