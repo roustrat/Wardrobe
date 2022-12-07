@@ -67,7 +67,8 @@ class DressesCategoryViewModel (
 
     override fun onCategoryChosen(namedCategory: NamedCategory) {
         currentCategory.value = namedCategory
-        uiActions.toast(namedCategory.name)
+        updateCurrentDressesValue()
+//        uiActions.toast(namedCategory.name)
     }
 
 //    private fun mergeSources() {
@@ -76,9 +77,7 @@ class DressesCategoryViewModel (
 //    }
 
     override fun onCategoryFocused(namedCategory: NamedCategory) {
-        currentCategory.value = namedCategory
-        currentDresses = repositoryPublic.getDressesOfCategory(namedCategory.name)
-        uiActions.toast(namedCategory.name)
+
     }
 
 

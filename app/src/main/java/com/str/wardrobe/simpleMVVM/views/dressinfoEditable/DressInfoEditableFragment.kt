@@ -91,10 +91,9 @@ class DressInfoEditableFragment : BaseFragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                viewModel.deleteDress()
-                requireActivity().onBackPressed()
-//                val fm = requireActivity().supportFragmentManager
-//                fm.popBackStack()
+//                viewModel.deleteDress()
+//                requireActivity().onBackPressed()
+                viewModel.closeWithoutSaveDress()
             }
         })
 
@@ -144,21 +143,6 @@ class DressInfoEditableFragment : BaseFragment() {
                     viewModel.updateDB()
                 }
         }
-//        categoryChooseSpin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-//                Log.d("categoryError1", categoryChooseSpin.adapter.getItem(pos).toString())
-//                if (viewModel.currentDress != null) {
-//                    viewModel.currentDress!!.category =
-//                        categoryChooseSpin.adapter.getItem(pos).toString()
-//                    viewModel.updateDB()
-//                    Log.d("categoryError2", categoryChooseSpin.adapter.getItem(pos).toString())
-//                }
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>) {
-//
-//            }
-//        }
 
         dressImage.apply {
             setOnClickListener {
@@ -229,23 +213,6 @@ class DressInfoEditableFragment : BaseFragment() {
         updatePhotoView()
         super.onResume()
     }
-
-//    @Deprecated("Deprecated in Java")
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        when(requestCode){
-//            PERMISSION_CODE -> {
-//                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-////                    showAlertDialog()
-//                }else{
-//                    Toast.makeText(requireContext(),"Permission denied", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-//    }
 
     private fun showAlertDialog() {
         val listener = DialogInterface.OnClickListener { _, which ->

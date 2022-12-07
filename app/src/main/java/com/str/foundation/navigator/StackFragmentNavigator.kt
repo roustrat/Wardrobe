@@ -42,7 +42,8 @@ class StackFragmentNavigator(
         if (result != null) {
             this.result = Event(result)
         }
-        activity.onBackPressed()
+        comeBack()
+//        activity.onBackPressed()
     }
 
     fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +59,16 @@ class StackFragmentNavigator(
 
     fun onDestroy() {
         activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentCallbacks)
+    }
+
+    fun comeBack() {
+        val currentFragment = activity.supportFragmentManager.findFragmentById(R.id.fragmentContainer) as Fragment
+        activity.supportFragmentManager.popBackStack()
+        val transaction = activity.supportFragmentManager.beginTransaction()
+        transaction
+            .setReorderingAllowed(true)
+            .remove(currentFragment)
+            .commit()
     }
 
     fun launchFragment(screen: BaseScreen, addToBackStack: Boolean = true) {

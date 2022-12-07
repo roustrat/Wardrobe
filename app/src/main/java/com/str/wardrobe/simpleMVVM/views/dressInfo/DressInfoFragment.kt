@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import com.str.foundation.utils.getScaledBitmap
 import com.str.wardrobe.R
 import com.str.foundation.views.BaseFragment
@@ -45,6 +46,15 @@ class DressInfoFragment : BaseFragment() {
         } else {
             dressImage.setImageResource(R.drawable.empty_photo)
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+//                requireActivity().onBackPressed()
+//                val fm = requireActivity().supportFragmentManager
+//                fm.popBackStack()
+                viewModel.closeFragment()
+            }
+        })
 
         super.onViewCreated(view, savedInstanceState)
     }

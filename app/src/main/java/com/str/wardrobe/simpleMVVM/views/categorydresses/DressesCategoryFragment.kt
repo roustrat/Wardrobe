@@ -2,6 +2,7 @@ package com.str.wardrobe.simpleMVVM.views.categorydresses
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
@@ -51,19 +52,22 @@ class DressesCategoryFragment : BaseFragment() {
                 viewModel.currentDresses = viewModel.updateCurrentDressesValue()
                 if (viewModel.currentDresses.value != null) {
                     adapterDress.items = viewModel.currentDresses.value!!
+                    Log.d("currentCategory", adapterDress.items.first().name)
                     adapterDress.notifyDataSetChanged()
                     viewModel.currentDress = viewModel.currentDresses.value!!.first()
                 } else {
                     adapterDress.items = emptyList()
+                    Log.d("currentCategory", "empty")
                 }
             }
-            Toast.makeText(requireContext(), "${viewModel.currentCategory.value?.name}", Toast.LENGTH_SHORT).show()
+            Log.d("currentCategory_1", "${viewModel.currentDresses.value == null}")
         }
 
         viewModel.currentDresses.observe(viewLifecycleOwner) {
             if (it != null) {
                 if (it.isNotEmpty()) {
                     adapterDress.items = it
+                    Log.d("currentDresses", adapterDress.items.first().name)
                     adapterDress.notifyDataSetChanged()
                     viewModel.currentDress = it.first()
                 }
