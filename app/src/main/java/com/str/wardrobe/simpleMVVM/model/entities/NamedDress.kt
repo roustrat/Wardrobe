@@ -17,7 +17,7 @@ data class NamedDress(
     @ColumnInfo(name = "category") var category: String = "",
     @ColumnInfo(name = "id", collate = ColumnInfo.NOCASE) var imgId: UUID = UUID.randomUUID(),
     @ColumnInfo(name = "description") var description: String = ""
-) {
+) : java.io.Serializable {
     val photoFileName
     get() = "IMG_$imgId.jpg"
 }

@@ -1,16 +1,12 @@
 package com.str.wardrobe.simpleMVVM.views.dressinfoEditable
 
 import android.net.Uri
-import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.str.foundation.camerax.CameraXFragment
 import com.str.foundation.navigator.Navigator
 import com.str.foundation.uiactions.UiActions
 import com.str.foundation.views.BaseViewModel
 import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
-import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
 import com.str.wardrobe.simpleMVVM.views.dressinfoEditable.DressInfoEditableFragment.Screen
@@ -42,15 +38,24 @@ class DressInfoEditableViewModel(
     fun saveDress() {
         repositoryPublic.updateDress(currentDress!!)
         val screen = DressesCategoryFragment.Screen()
-        navigator.launch(screen)
+        navigator.launchWithRemove(screen)
     }
 
     fun closeWithoutSaveDress() {
+        deleteDress()
         val screen = DressesCategoryFragment.Screen()
-        navigator.launch(screen)
+        navigator.launchWithRemove(screen)
     }
 
-    fun goToPhoto() {
+    fun deleteDress() {
+        repositoryPublic.deleteDress(currentDress!!)
+    }
+
+    fun goBack() {
+        navigator.goBack()
+    }
+
+    fun useCameraX() {
         val screen = CameraXFragment.Screen(currentDress as NamedDress)
         navigator.launch(screen)
     }

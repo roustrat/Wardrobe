@@ -32,6 +32,7 @@ class CategoryInfoViewModel (
     }
 
     fun closeWithoutSaveCategory() {
+
         val screen = DressesCategoryFragment.Screen()
         navigator.launch(screen)
     }

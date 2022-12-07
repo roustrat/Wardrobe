@@ -13,4 +13,13 @@
     <string name="save">Сохранить</string>
     <string name="cancel">Отменить</string>
     <string name="take_photo">Take photo</string>
+    <string name="dress_name">Название</string>
+    <string name="dressCategory">Категория</string>
+    <string name="input_dress_name">Введите название одежды</string>
+    <string name="dress_photo_action_yes">Камера</string>
+    <string name="dress_photo_action_no">Галерея</string>
+    <string name="dress_photo_action_ignore">Назад</string>
+    <string name="dress_photo_dialog_canceled">Операция отменена пользователем</string>
+    <string name="dress_photo_alert_title">Выбор фото</string>
+    <string name="dress_photo_alert_message">Выберите источник фотографии одежды</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.str.wardrobe.simpleMVVM.views.categorydresses
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageButton
@@ -11,7 +12,6 @@ import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
-import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 
 class DressesCategoryFragment : BaseFragment() {
 
@@ -21,12 +21,18 @@ class DressesCategoryFragment : BaseFragment() {
     override val viewModel by screenViewModel<DressesCategoryViewModel>()
 
     private lateinit var addButton: ImageButton
+    private lateinit var adapterCategory: CategoriesAdapter
+    private lateinit var adapterDress: DressesAdapter
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding =  inflater.inflate(R.layout.dresses_category, container, false)
 
-        val adapterCategory = CategoriesAdapter(viewModel)
-        val adapterDress = DressesAdapter(viewModel, requireContext(), requireActivity())
+        adapterCategory = CategoriesAdapter(viewModel)
+        adapterDress = DressesAdapter(viewModel, requireContext(), requireActivity())
+
+//        val adapterCategory = CategoriesAdapter(viewModel)
+//        val adapterDress = DressesAdapter(viewModel, requireContext(), requireActivity())
         setupCategoryLayoutManager(binding, adapterCategory)
         setupDressLayoutManager(binding, adapterDress)
 
@@ -38,13 +44,19 @@ class DressesCategoryFragment : BaseFragment() {
                     viewModel.currentDresses = viewModel.updateCurrentDressesValue()
                 }
             }
-            Toast.makeText(requireContext(), "Все", Toast.LENGTH_SHORT).show()
         }
 
         viewModel.currentCategory.observe(viewLifecycleOwner) {
-//            if(it != null) {
-//                viewModel.currentDresses.value = viewModel.allDresses.value.takeIf { it1: List<NamedDress>? -> it1 == it}
-//            }
+            if(it != null) {
+                viewModel.currentDresses = viewModel.updateCurrentDressesValue()
+                if (viewModel.currentDresses.value != null) {
+                    adapterDress.items = viewModel.currentDresses.value!!
+                    adapterDress.notifyDataSetChanged()
+                    viewModel.currentDress = viewModel.currentDresses.value!!.first()
+                } else {
+                    adapterDress.items = emptyList()
+                }
+            }
             Toast.makeText(requireContext(), "${viewModel.currentCategory.value?.name}", Toast.LENGTH_SHORT).show()
         }
 
@@ -52,12 +64,19 @@ class DressesCategoryFragment : BaseFragment() {
             if (it != null) {
                 if (it.isNotEmpty()) {
                     adapterDress.items = it
+                    adapterDress.notifyDataSetChanged()
                     viewModel.currentDress = it.first()
                 }
             }
         }
 
         return binding
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        adapterDress.notifyDataSetChanged()
+        super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +86,7 @@ class DressesCategoryFragment : BaseFragment() {
         addButton = view.findViewById(R.id.newDressItem)
 
         addButton.setOnClickListener {
-            viewModel.addDress(requireContext())
+            viewModel.addDress()
         }
 
     }
@@ -78,9 +97,6 @@ class DressesCategoryFragment : BaseFragment() {
         categoriesRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 categoriesRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-//                val width = categoriesRecyclerView.width
-//                val itemWidth = resources.getDimensionPixelSize(R.dimen.item_width)
-//                val columns = width / itemWidth
                 categoriesRecyclerView.adapter = adapter
                 categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
@@ -93,9 +109,6 @@ class DressesCategoryFragment : BaseFragment() {
         dressesRecyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 dressesRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-//                val width = categoriesRecyclerView.width
-//                val itemWidth = resources.getDimensionPixelSize(R.dimen.item_width)
-//                val columns = width / itemWidth
                 dressesRecyclerView.adapter = adapter
                 dressesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }

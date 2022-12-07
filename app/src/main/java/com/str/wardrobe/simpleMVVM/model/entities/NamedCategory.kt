@@ -13,6 +13,6 @@ import androidx.room.Index
 data class NamedCategory(
     @ColumnInfo(name = "name", collate = ColumnInfo.NOCASE) var name: String,
     @ColumnInfo(name = "description") var description: String
-) {
+) : java.io.Serializable {
 
 }

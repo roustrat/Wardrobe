@@ -6,9 +6,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/nameOfDress_input"
+        android:id="@+id/nameOfCategory_input"
         style="@style/TextInputStyle"
-        app:layout_constraintBottom_toTopOf="@id/descriptionOfDress_edit"
+        app:layout_constraintBottom_toTopOf="@id/descriptionOfCategory_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +20,7 @@
         app:endIconMode="clear_text">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameOfDress_edit"
+            android:id="@+id/nameOfCategory_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="-5dp"
@@ -34,14 +34,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
-        android:id="@+id/descriptionOfDress_edit"
+        android:id="@+id/descriptionOfCategory_edit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameOfDress_input"
+        app:layout_constraintTop_toBottomOf="@id/nameOfCategory_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

@@ -12,28 +12,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/nameOfCategory"
+        app:layout_constraintBottom_toTopOf="@id/nameOfDress"
         android:src="@drawable/empty_photo"/>
 
     <TextView
-        android:id="@+id/nameOfCategory"
+        android:id="@+id/nameOfDress"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_margin="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageOfDress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/descriptionOfCategory"/>
+        app:layout_constraintBottom_toTopOf="@id/descriptionOfDress"/>
 
     <TextView
-        android:id="@+id/descriptionOfCategory"
+        android:id="@+id/descriptionOfDress"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameOfCategory"
+        app:layout_constraintTop_toBottomOf="@id/nameOfDress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

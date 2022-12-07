@@ -12,49 +12,106 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/nameOfDress_input"
+        app:layout_constraintBottom_toTopOf="@id/nameOfDress_input_layout"
         android:src="@drawable/empty_photo"/>
 
-    <EditText
-        android:id="@+id/nameOfDress_input"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="10dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nameOfDress_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageOfDress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/category_choose_spin"/>
-
-    <Spinner
-        android:id="@+id/category_choose_spin"
+        app:layout_constraintBottom_toTopOf="@id/category_choose_layout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:hint="@string/dress_name"
+        app:endIconMode="clear_text"
+        app:helperText="Обязательно*"
+        app:boxStrokeColor="@color/custom_input"
+        app:boxStrokeErrorColor="@color/red"
+        app:helperTextTextColor="@color/silver"
+        android:textColorHint="@color/silver"
+        app:hintTextColor="@color/silver">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nameOfDress_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/fourth_color"
+            android:textSize="@dimen/app_text_size"
+            android:fontFamily="sans-serif-condensed-medium"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/category_choose_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:textSize="28sp"
-        android:visibility="visible"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameOfDress_input"
+        app:layout_constraintTop_toBottomOf="@id/nameOfDress_input_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/descriptionOfDress_edit"/>
+        app:layout_constraintBottom_toTopOf="@id/descriptionOfDress_input_layout"
+        android:hint="@string/dressCategory"
+        app:boxStrokeColor="@color/custom_input"
+        app:boxStrokeErrorColor="@color/red"
+        app:helperTextTextColor="@color/silver"
+        android:textColorHint="@color/silver"
+        app:hintTextColor="@color/silver">
 
-    <EditText
-        android:id="@+id/descriptionOfDress_edit"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
+        <AutoCompleteTextView
+            android:id="@+id/category_choose_spin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_weight="1"
+            android:inputType="none"
+            android:textColor="@color/fourth_color"
+            android:textSize="@dimen/app_text_size"
+            android:fontFamily="sans-serif-condensed-medium"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/descriptionOfDress_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/category_choose_spin"
+        app:layout_constraintTop_toBottomOf="@id/category_choose_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/dress_name"
+        app:endIconMode="clear_text"
+        app:helperText="Обязательно*"
+        app:boxStrokeColor="@color/custom_input"
+        app:boxStrokeErrorColor="@color/red"
+        app:helperTextTextColor="@color/silver"
+        android:textColorHint="@color/silver"
+        app:hintTextColor="@color/silver">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/descriptionOfDress_edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/fourth_color"
+            android:textSize="@dimen/app_text_size"
+            android:fontFamily="sans-serif-condensed-medium"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

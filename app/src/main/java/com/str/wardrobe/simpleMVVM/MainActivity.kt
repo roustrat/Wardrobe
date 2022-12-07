@@ -1,7 +1,9 @@
 package com.str.wardrobe.simpleMVVM
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -85,6 +87,7 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
             when (menuItem.itemId) {
                 R.id.nav_home -> {
                     Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
+                    drawerLayout.closeDrawers()
                     true
                 }
                 R.id.nav_new_category -> {
@@ -125,6 +128,45 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
                 }
             }
         }
+
+        val backPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() = drawerLayout.closeDrawers()
+        }
+
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                backPressedCallback.isEnabled = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                backPressedCallback.isEnabled = false
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                when(newState) {
+                    DrawerLayout.STATE_IDLE -> {
+
+                    }
+                    DrawerLayout.STATE_DRAGGING -> {
+
+                    }
+                    DrawerLayout.STATE_SETTLING -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+
+        })
+
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
+
     }
 
     override fun onDestroy() {
@@ -132,20 +174,21 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
         super.onDestroy()
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        drawerLayout.openDrawer(navView)
-        onBackPressed()
-        return true
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        drawerLayout.openDrawer(navView)
+//        onBackPressed()
+//        return true
+//    }
 
     // override the onBackPressed() function to close the Drawer when the back button is clicked
-    override fun onBackPressed() {
-        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            this.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
+//    @Deprecated("Deprecated in Java")
+//    override fun onBackPressed() {
+//        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            this.drawerLayout.closeDrawer(GravityCompat.START)
+//        } else {
+//            super.onBackPressed()
+//        }
+//    }
 
     override fun onResume() {
         super.onResume()

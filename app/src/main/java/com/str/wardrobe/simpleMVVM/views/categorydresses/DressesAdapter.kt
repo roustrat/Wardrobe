@@ -1,5 +1,6 @@
 package com.str.wardrobe.simpleMVVM.views.categorydresses
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.util.Log
@@ -30,6 +31,7 @@ class DressesAdapter(
      */
 
     var items: List<NamedDress> = emptyList()
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -50,6 +52,7 @@ class DressesAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val namedDress = items[position]
         with(holder) {
+            this.itemView.tag = namedDress
             this.dressNameTextView.text = namedDress.name
             val photoFile = File(context.applicationContext.filesDir, namedDress.photoFileName)
             if (photoFile.exists()) {
@@ -68,7 +71,9 @@ class DressesAdapter(
 
     override fun onClick(p0: View) {
         val item = p0.tag as NamedDress
-        listener.onDressChosen(item)
+        if (item != null) {
+            listener.onDressChosen(item)
+        }
     }
 
     interface Listener {
@@ -77,15 +82,5 @@ class DressesAdapter(
          * @param namedDress dress chosen by the user
          */
         fun onDressChosen(namedDress: NamedDress)
-    }
-
-    private fun setPhotoView(dress: NamedDress, image: ImageView) {
-        val photoFile = File(context.applicationContext.filesDir, "IMG_"+dress.photoFileName)
-        if (photoFile.exists()) {
-            val bitmap = getScaledBitmap(photoFile.path, activity)
-            image.setImageBitmap(bitmap)
-        } else {
-            image.setImageResource(R.drawable.empty_photo)
-        }
     }
 }

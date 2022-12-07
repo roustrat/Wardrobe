@@ -34,10 +34,10 @@ class CategoryInfoFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        categoryNameInput = view.findViewById(R.id.nameOfDress_input)
-        categoryNameEdit = view.findViewById(R.id.nameOfDress_edit)
+        categoryNameInput = view.findViewById(R.id.nameOfCategory_input)
+        categoryNameEdit = view.findViewById(R.id.nameOfCategory_edit)
 
-        categoryDescription = view.findViewById(R.id.descriptionOfDress_edit)
+        categoryDescription = view.findViewById(R.id.descriptionOfCategory_edit)
 
         super.onViewCreated(view, savedInstanceState)
     }

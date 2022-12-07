@@ -2,4 +2,6 @@
 <resources>
     <string name="current_dress">Current dress</string>
     <string name="take_photo">Take photo</string>
+    <string name="dress_name">Название</string>
+    <string name="dressCategory">Категория</string>
 </resources>

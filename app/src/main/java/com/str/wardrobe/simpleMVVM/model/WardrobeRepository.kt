@@ -93,15 +93,21 @@ class WardrobeRepository(context: Context) : WardrobeBaseRepository {
         }
 
         fun deleteCategory(category: NamedCategory) {
-            namedCategoryDao.deleteCategory(category)
+            executor.execute {
+                namedCategoryDao.deleteCategory(category)
+            }
         }
 
         fun deleteDress(dress: NamedDress) {
-            namedDressDao.deleteDress(dress)
+            executor.execute {
+                namedDressDao.deleteDress(dress)
+            }
         }
 
         fun deleteDresses(dresses: List<NamedDress>) {
-            namedDressDao.deleteDresses(dresses)
+            executor.execute {
+                namedDressDao.deleteDresses(dresses)
+            }
         }
 
     override var allCategory: LiveData<List<NamedCategory>> = getCategories()

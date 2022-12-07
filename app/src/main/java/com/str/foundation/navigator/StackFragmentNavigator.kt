@@ -26,6 +26,10 @@ class StackFragmentNavigator(
         launchFragment(screen)
     }
 
+    override fun launchWithRemove(screen: BaseScreen) {
+        launchFragmentWithRemove(screen)
+    }
+
     override fun launchWithResult(screen: BaseScreen, result: Any?) {
         // Понять, дойдет ли result до фрагмента
         if (result != null) {
@@ -71,14 +75,44 @@ class StackFragmentNavigator(
                 R.anim.pop_enter,
                 R.anim.pop_exit
             )
+            .setReorderingAllowed(true)
             .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
 
-    fun notifyScreenUpdates() {
+    fun launchFragmentWithRemove(screen: BaseScreen, addToBackStack: Boolean = true) {
+        val currentFragment = activity.supportFragmentManager.findFragmentById(R.id.fragmentContainer) as Fragment
+        // as screen classes are inside fragments -> we can create fragment directly from screen
+        val fragment = screen.javaClass.enclosingClass.newInstance() as Fragment
+        // set screen object as fragment's argument
+        fragment.arguments = bundleOf(ARG_SCREEN to screen)
+
+        val transaction = activity.supportFragmentManager.beginTransaction()
+        if (addToBackStack) transaction.addToBackStack(null)
+        transaction
+            .setCustomAnimations(
+                R.anim.enter,
+                R.anim.exit,
+                R.anim.pop_enter,
+                R.anim.pop_exit
+            )
+            .setReorderingAllowed(true)
+            .replace(R.id.fragmentContainer, fragment)
+            .remove(currentFragment)
+            .commit()
+    }
+
+    fun notifyScreenUpdates(f: Fragment) {
         val f = activity.supportFragmentManager.findFragmentById(R.id.fragmentContainer)
 
-        if (activity.supportFragmentManager.backStackEntryCount > 0) {
+//        if (activity.supportFragmentManager.backStackEntryCount > 0) {
+//            // more than 1 screen -> show back button in the toolbar
+//            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        } else {
+//            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+//        }
+
+        if (activity.supportFragmentManager == f) {
             // more than 1 screen -> show back button in the toolbar
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         } else {
@@ -103,7 +137,7 @@ class StackFragmentNavigator(
 
     private val fragmentCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
-            notifyScreenUpdates()
+            notifyScreenUpdates(f)
             publishResults(f)
         }
     }
