@@ -1,10 +1,12 @@
 package com.str.foundation.navigator
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.str.foundation.ARG_SCREEN
@@ -12,7 +14,9 @@ import com.str.foundation.utils.Event
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.wardrobe.R
+import com.str.wardrobe.simpleMVVM.MainActivity
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
+import com.str.wardrobe.simpleMVVM.views.dressInfo.DressInfoFragment
 
 class StackFragmentNavigator(
     private val activity: AppCompatActivity,
@@ -113,8 +117,8 @@ class StackFragmentNavigator(
             .commit()
     }
 
-    fun notifyScreenUpdates(f: Fragment) {
-        val f = activity.supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+    fun notifyScreenUpdates(fragment: Fragment) {
+//        val fragment = activity.supportFragmentManager.findFragmentById(R.id.fragmentContainer)
 
 //        if (activity.supportFragmentManager.backStackEntryCount > 0) {
 //            // more than 1 screen -> show back button in the toolbar
@@ -123,12 +127,15 @@ class StackFragmentNavigator(
 //            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 //        }
 
-        if (activity.supportFragmentManager == f) {
-            // more than 1 screen -> show back button in the toolbar
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        } else {
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        }
+//        if (fragment == DressesCategoryFragment::class.java) {
+//            // more than 1 screen -> show back button in the toolbar
+//
+//            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//            Log.d("notifyScreenUpdate", "setDisplayHomeAsUpEnabled(true)")
+//        } else {
+//            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+//            Log.d("notifyScreenUpdate", "setDisplayHomeAsUpEnabled(false)")
+//        }
 
 //        if (f is HasScreenTitle && f.getScreenTitle() != null) {
 //            // fragment has custom screen title -> display it

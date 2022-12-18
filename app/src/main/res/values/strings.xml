@@ -22,4 +22,5 @@
     <string name="dress_photo_dialog_canceled">Операция отменена пользователем</string>
     <string name="dress_photo_alert_title">Выбор фото</string>
     <string name="dress_photo_alert_message">Выберите источник фотографии одежды</string>
+    <string name="menu">Меню</string>
 </resources>

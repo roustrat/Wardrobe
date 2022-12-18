@@ -1,6 +1,7 @@
 package com.str.wardrobe.simpleMVVM
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
 
     // Initialise the DrawerLayout, NavigationView and ToggleBar
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var navView: NavigationView
     private lateinit var toolbar: Toolbar
 
@@ -66,17 +67,16 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Pass the ActionBarToggle action into the drawerListener
-        toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
+        drawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_open
         )
-        drawerLayout.addDrawerListener(toggle)
+        drawerLayout.addDrawerListener(drawerToggle)
 
 
         // Call syncState() on the action bar so it'll automatically change to the back button when the drawer layout is open
-//        actionBarToggle.isDrawerIndicatorEnabled = true
-        toggle.isDrawerIndicatorEnabled = true
-        toggle.syncState()
+        drawerToggle.isDrawerIndicatorEnabled = true
+        drawerToggle.syncState()
 
 //        // This will display an Up icon (<-), we will replace it with hamburger later
 ////        supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -166,6 +166,30 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
 
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
+
+    }
+
+    fun resetActionBar(childAction: Boolean, drawerMode: Int) {
+        if (childAction) {
+            drawerToggle.isDrawerIndicatorEnabled = false
+            drawerLayout.removeDrawerListener(drawerToggle)
+//            actionBar?.setDisplayHomeAsUpEnabled(true)
+            actionBar?.setHomeButtonEnabled(true)
+        } else {
+            // Pass the ActionBarToggle action into the drawerListener
+            drawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_open
+            )
+            drawerLayout.addDrawerListener(drawerToggle)
+            // Call syncState() on the action bar so it'll automatically change to the back button when the drawer layout is open
+//        actionBarToggle.isDrawerIndicatorEnabled = true
+            drawerToggle.isDrawerIndicatorEnabled = true
+            drawerToggle.syncState()
+            Log.d("${childAction}", "hasn`t made2")
+        }
+
+        drawerLayout.setDrawerLockMode(drawerMode)
 
     }
 

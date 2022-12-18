@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.net.Uri
 import android.nfc.FormatException
-import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -18,13 +17,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
-import com.str.foundation.utils.getScaledBitmap
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.R
+import com.str.wardrobe.simpleMVVM.MainActivity
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.*
@@ -149,6 +149,8 @@ class DressInfoEditableFragment : BaseFragment() {
                showAlertDialog()
             }
         }
+
+        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

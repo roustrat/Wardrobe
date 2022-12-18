@@ -5,13 +5,19 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import com.str.foundation.utils.getScaledBitmap
-import com.str.wardrobe.R
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
+import com.str.wardrobe.R
+import com.str.wardrobe.simpleMVVM.MainActivity
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 import java.io.File
+
 
 class DressInfoFragment : BaseFragment() {
 
@@ -37,6 +43,8 @@ class DressInfoFragment : BaseFragment() {
         dressDescription = view.findViewById(R.id.descriptionOfDress)
         dressImage = view.findViewById(R.id.imageOfDress)
 
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
+
         dressName.text = viewModel.currentDress.name
         dressDescription.text = viewModel.currentDress.description
         val photoFile = File(requireContext().applicationContext.filesDir, viewModel.currentDress.photoFileName)
@@ -55,6 +63,36 @@ class DressInfoFragment : BaseFragment() {
                 viewModel.closeFragment()
             }
         })
+
+        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Add menu items here
+                menuInflater.inflate(R.menu.menu_dressinfo_fragment, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.menu -> {
+                        // todo menu1
+                        true
+                    }
+                    R.id.home -> {
+                        viewModel.closeFragment()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         super.onViewCreated(view, savedInstanceState)
     }
