@@ -80,7 +80,7 @@ class DressesCategoryFragment : BaseFragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
-        (activity as MainActivity?)!!.resetActionBar(false, DrawerLayout.LOCK_MODE_UNLOCKED)
+        (activity as MainActivity?)!!.resetActionBar(false, DrawerLayout.LOCK_MODE_UNLOCKED, null)
         adapterDress.notifyDataSetChanged()
         super.onResume()
     }

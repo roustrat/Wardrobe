@@ -3,6 +3,7 @@ package com.str.wardrobe.simpleMVVM.views.dressInfo
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.MenuHost
@@ -64,7 +65,7 @@ class DressInfoFragment : BaseFragment() {
             }
         })
 
-        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
 
         // The usage of an interface lets you inject your own implementation
         val menuHost: MenuHost = requireActivity()
@@ -81,21 +82,47 @@ class DressInfoFragment : BaseFragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 // Handle the menu selection
                 return when (menuItem.itemId) {
-                    R.id.menu -> {
-                        // todo menu1
+                    R.id.change -> {
+                        viewModel.changeDress()
                         true
                     }
-                    R.id.home -> {
+                    R.id.delete -> {
+                        viewModel.closeWithoutSaveDress()
+                        true
+                    }
+                    else -> {
                         viewModel.closeFragment()
-                        true
+                        false
                     }
-                    else -> false
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         super.onViewCreated(view, savedInstanceState)
     }
+
+//    fun showMenu(v: View) {
+//        PopupMenu(requireContext(), v).apply {
+//            // MainActivity implements OnMenuItemClickListener
+//            setOnMenuItemClickListener(requireActivity())
+//            inflate(R.menu.dressinfo_popup_menu)
+//            show()
+//        }
+//    }
+//
+//    override fun onMenuItemClick(item: MenuItem): Boolean {
+//        return when (item.itemId) {
+//            R.id.change -> {
+//
+//                true
+//            }
+//            R.id.delete -> {
+//
+//                true
+//            }
+//            else -> false
+//        }
+//    }
 
 
 }

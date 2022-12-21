@@ -55,7 +55,7 @@ class StackFragmentNavigator(
             // define the initial screen that should be launched when app starts.
             launchFragment(
                 screen = DressesCategoryFragment.Screen(),
-                addToBackStack = false
+                addToBackStack = true
             )
         }
         activity.supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentCallbacks, false)

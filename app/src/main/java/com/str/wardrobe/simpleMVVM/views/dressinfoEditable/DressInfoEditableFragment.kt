@@ -104,7 +104,7 @@ class DressInfoEditableFragment : BaseFragment() {
         super.onStart()
 
         // Определение EditText названия одежды
-        dressName.doOnTextChanged { text, start, before, count ->
+        dressName.doOnTextChanged { text, _, _, _ ->
             try {
                 if (text != null) {
                     viewModel.setDressName(text.toString())
@@ -120,7 +120,7 @@ class DressInfoEditableFragment : BaseFragment() {
         }
 
         // Определение EditText описания одежды
-        dressDescription.doOnTextChanged { text, start, before, count ->
+        dressDescription.doOnTextChanged { text, _, _, _ ->
             try {
                 if (text != null) {
                     viewModel.setDressDescription(text.toString())
@@ -136,7 +136,7 @@ class DressInfoEditableFragment : BaseFragment() {
         }
 
         // Определение слушателя для Spinner выбора категории
-        categoryChooseSpin.setOnItemClickListener { parent, view, position, id ->
+        categoryChooseSpin.setOnItemClickListener { parent, _, position, _ ->
             if (viewModel.currentDress != null) {
                     viewModel.currentDress!!.category =
                         parent.getItemAtPosition(position).toString()
@@ -150,7 +150,8 @@ class DressInfoEditableFragment : BaseFragment() {
             }
         }
 
-        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -292,7 +293,7 @@ class DressInfoEditableFragment : BaseFragment() {
 private val selectImageFromGalleryResult = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
     uri?.let {
         val iStream : InputStream =
-            requireActivity().contentResolver.openInputStream(uri!!)!!
+            requireActivity().contentResolver.openInputStream(uri)!!
         copyStreamToFile(iStream, viewModel.photoFile)
         iStream.close()
     }
@@ -313,6 +314,10 @@ private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
             }
         }
     }
+
+
+
+
 //
 //    private fun showToast(@StringRes messageRes: Int) {
 //        Toast.makeText(requireContext(), messageRes, Toast.LENGTH_SHORT).show()

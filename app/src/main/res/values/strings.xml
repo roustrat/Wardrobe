@@ -23,4 +23,6 @@
     <string name="dress_photo_alert_title">Выбор фото</string>
     <string name="dress_photo_alert_message">Выберите источник фотографии одежды</string>
     <string name="menu">Меню</string>
+    <string name="change">Редактировать</string>
+    <string name="delete">Удалить</string>
 </resources>

@@ -19,6 +19,7 @@ import com.str.foundation.navigator.IntermediateNavigator
 import com.str.foundation.navigator.StackFragmentNavigator
 import com.str.foundation.uiactions.AndroidUiActions
 import com.str.foundation.utils.viewModelCreator
+import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.FragmentsHolder
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
@@ -169,12 +170,18 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
 
     }
 
-    fun resetActionBar(childAction: Boolean, drawerMode: Int) {
+    fun resetActionBar(childAction: Boolean, drawerMode: Int, screen: BaseScreen?) {
         if (childAction) {
             drawerToggle.isDrawerIndicatorEnabled = false
             drawerLayout.removeDrawerListener(drawerToggle)
 //            actionBar?.setDisplayHomeAsUpEnabled(true)
             actionBar?.setHomeButtonEnabled(true)
+            this.toolbar.setNavigationIcon(R.drawable.ic_back_button)
+            this.toolbar.setNavigationOnClickListener {
+                if (screen != null) {
+                    navigator.launchWithRemove(screen)
+                }
+            }
         } else {
             // Pass the ActionBarToggle action into the drawerListener
             drawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
@@ -186,7 +193,7 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
 //        actionBarToggle.isDrawerIndicatorEnabled = true
             drawerToggle.isDrawerIndicatorEnabled = true
             drawerToggle.syncState()
-            Log.d("${childAction}", "hasn`t made2")
+            Log.d("$childAction", "hasn`t made2")
         }
 
         drawerLayout.setDrawerLockMode(drawerMode)

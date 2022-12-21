@@ -79,5 +79,6 @@ class DressInfoEditableViewModel(
 
     }
 
+    fun backFragmentScreen() : DressesCategoryFragment.Screen = DressesCategoryFragment.Screen()
 
 }
