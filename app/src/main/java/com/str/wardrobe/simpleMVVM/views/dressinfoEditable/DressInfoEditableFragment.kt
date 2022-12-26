@@ -16,8 +16,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.str.foundation.views.BaseFragment
@@ -152,39 +155,50 @@ class DressInfoEditableFragment : BaseFragment() {
 
         (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
 
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Add menu items here
+                menuInflater.inflate(R.menu.menu_dress_fragment, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.add_dress -> {
+                        if (dressName.error == null && dressDescription.error == null) {
+                            if (!viewModel.currentDress?.name.equals("") &&
+                                !viewModel.currentDress?.description.equals("") &&
+                                !viewModel.currentDress?.category.equals("")) {
+
+                                viewModel.saveDress()
+
+                            }
+                        }
+                        true
+                    }
+                    R.id.cancel_dress -> {
+                        viewModel.closeWithoutSaveDress()
+                        true
+                    }
+                    else -> {
+                        viewModel.closeWithoutSaveDress()
+                        false
+                    }
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
         viewModel.loadDress()
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_dress_fragment, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.add_dress -> {
-                if (dressName.error == null && dressDescription.error == null) {
-                    if (!viewModel.currentDress?.name.equals("") &&
-                        !viewModel.currentDress?.description.equals("") &&
-                        !viewModel.currentDress?.category.equals("")) {
-
-                        viewModel.saveDress()
-
-                    }
-                }
-                true
-            }
-            R.id.cancel_dress -> {
-                viewModel.closeWithoutSaveDress()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun updatePhotoView() {

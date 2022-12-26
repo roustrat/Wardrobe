@@ -34,7 +34,7 @@
         android:id="@+id/dressNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/settingsImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/dressContainer"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,5 +46,19 @@
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="Dress Name" />
+
+    <ImageView
+        android:id="@+id/settingsImageView"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/dress_item_settings"
+        android:scaleType="fitXY"
+        android:cropToPadding="true"
+        android:src="@drawable/menu"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toEndOf="@id/dressNameTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

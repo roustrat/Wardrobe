@@ -23,6 +23,10 @@
     <string name="dress_photo_alert_title">Выбор фото</string>
     <string name="dress_photo_alert_message">Выберите источник фотографии одежды</string>
     <string name="menu">Меню</string>
-    <string name="change">Редактировать</string>
-    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="remove">Удалить</string>
+    <string name="dress_item_settings">Боковое меню элемента списка</string>
+    <string name="move_up">Вверх</string>
+    <string name="move_down">Вниз</string>
+
 </resources>

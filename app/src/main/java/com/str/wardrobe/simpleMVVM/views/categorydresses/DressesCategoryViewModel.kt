@@ -1,5 +1,6 @@
 package com.str.wardrobe.simpleMVVM.views.categorydresses
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -11,6 +12,7 @@ import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 import com.str.wardrobe.simpleMVVM.views.dressInfo.DressInfoFragment
 import com.str.wardrobe.simpleMVVM.views.dressinfoEditable.DressInfoEditableFragment
+import java.util.*
 
 class DressesCategoryViewModel (
     private val navigator: Navigator,
@@ -58,11 +60,36 @@ class DressesCategoryViewModel (
 //        repositoryPublic.addCategory(category)
 //    }
 
-    override fun onDressChosen(namedDress: NamedDress) {
+    override fun onDressDetails(namedDress: NamedDress) {
         currentDress = namedDress
         uiActions.toast(namedDress.name)
         val screen = DressInfoFragment.Screen(currentDress as NamedDress)
         navigator.launch(screen)
+    }
+
+    override fun onDressMove(namedDress: NamedDress, moveBy: Int) {
+        val dresses : List<NamedDress>? = currentDresses.value
+        val oldIndex = dresses?.indexOfFirst { it.imgId == namedDress.imgId }
+        if (oldIndex == -1) return
+        val newIndex = oldIndex?.plus(moveBy)
+        if (newIndex != null) {
+            if (newIndex < 0 || newIndex >= dresses.size) return
+        }
+        if (oldIndex != null) {
+            if (newIndex != null) {
+                Collections.swap(dresses, oldIndex, newIndex)
+            }
+        }
+    }
+
+    override fun onDressEdit(namedDress: NamedDress) {
+        Log.d("namedDress", namedDress.category)
+        val screen = DressInfoEditableFragment.Screen(repositoryPublic.getCategoryByName(namedDress.category).value!!)
+        navigator.launchWithRemove(screen)
+    }
+
+    override fun onDressDelete(namedDress: NamedDress) {
+        repositoryPublic.deleteDress(namedDress)
     }
 
     override fun onCategoryChosen(namedCategory: NamedCategory) {

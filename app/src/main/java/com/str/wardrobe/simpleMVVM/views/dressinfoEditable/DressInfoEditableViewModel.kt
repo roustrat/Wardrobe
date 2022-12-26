@@ -47,7 +47,7 @@ class DressInfoEditableViewModel(
         navigator.launchWithRemove(screen)
     }
 
-    fun deleteDress() {
+    private fun deleteDress() {
         repositoryPublic.deleteDress(currentDress!!)
     }
 

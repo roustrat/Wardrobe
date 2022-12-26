@@ -3,7 +3,6 @@ package com.str.wardrobe.simpleMVVM.views.dressInfo
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
-import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.MenuHost
@@ -83,7 +82,7 @@ class DressInfoFragment : BaseFragment() {
                 // Handle the menu selection
                 return when (menuItem.itemId) {
                     R.id.change -> {
-                        viewModel.changeDress()
+                        viewModel.editDress()
                         true
                     }
                     R.id.delete -> {
