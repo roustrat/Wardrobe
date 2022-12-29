@@ -51,7 +51,10 @@ class DressesCategoryViewModel (
     }
 
     fun addDress() {
-        val screen = DressInfoEditableFragment.Screen(currentCategory.value as NamedCategory)
+        val dress = NamedDress()
+        // Есть почти нулевая, но вероятность, что будет всё-таки одежда с таким же UUID
+        repositoryPublic.addDress(dress)
+        val screen = DressInfoEditableFragment.Screen(dress.imgId, false)
         navigator.launch(screen)
 
     }
@@ -84,7 +87,7 @@ class DressesCategoryViewModel (
 
     override fun onDressEdit(namedDress: NamedDress) {
         Log.d("namedDress", namedDress.category)
-        val screen = DressInfoEditableFragment.Screen(repositoryPublic.getCategoryByName(namedDress.category).value!!)
+        val screen = DressInfoEditableFragment.Screen(namedDress.imgId, true)
         navigator.launchWithRemove(screen)
     }
 

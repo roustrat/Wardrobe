@@ -8,6 +8,7 @@ import com.str.wardrobe.simpleMVVM.model.database.WardrobeDatabase
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 import java.io.File
+import java.util.UUID
 import java.util.concurrent.Executors
 
 private const val WARDROBE_DATABASE_NAME="wardrobe_database"
@@ -63,7 +64,7 @@ class WardrobeRepository(context: Context) : WardrobeBaseRepository {
             return namedDressDao.getDress(name)
         }
 
-        fun getDressById(id: Int): LiveData<NamedDress> {
+        fun getDressById(id: UUID): LiveData<NamedDress> {
             return namedDressDao.getDressOfId(id)
         }
 

@@ -33,7 +33,7 @@ class DressInfoViewModel (
     }
 
     fun editDress() {
-        val screen = DressInfoEditableFragment.Screen(repositoryPublic.getCategoryByName(currentDress.category).value!!)
+        val screen = DressInfoEditableFragment.Screen(currentDress.imgId, true)
         navigator.launchWithRemove(screen)
     }
 

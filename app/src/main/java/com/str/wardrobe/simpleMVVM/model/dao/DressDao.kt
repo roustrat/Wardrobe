@@ -3,6 +3,7 @@ package com.str.wardrobe.simpleMVVM.model.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
+import java.util.UUID
 
 @Dao
 interface DressDao {
@@ -20,7 +21,7 @@ interface DressDao {
 
     @Transaction
     @Query("SELECT * FROM namedDress WHERE id=(:id)")
-    fun getDressOfId(id: Int): LiveData<NamedDress>
+    fun getDressOfId(id: UUID): LiveData<NamedDress>
 
     @Transaction
     @Query("SELECT * FROM namedDress WHERE name=:name")

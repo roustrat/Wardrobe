@@ -28,5 +28,12 @@
     <string name="dress_item_settings">Боковое меню элемента списка</string>
     <string name="move_up">Вверх</string>
     <string name="move_down">Вниз</string>
+    <string name="dress_description">Описание</string>
+    <string name="exit_yes">Да</string>
+    <string name="exit_no">Нет</string>
+    <string name="exit_ignore">Назад</string>
+    <string name="exit_alert_title">Назад</string>
+    <string name="exit_message_v_1">Сохранить изменения?</string>
+    <string name="exit_message_v_2">Вы действительно хотите выйти? Все изменения будут утеряны.</string>
 
 </resources>

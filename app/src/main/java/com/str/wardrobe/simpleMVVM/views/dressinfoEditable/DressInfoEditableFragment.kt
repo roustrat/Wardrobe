@@ -7,10 +7,7 @@ import android.nfc.FormatException
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
-import android.widget.ImageView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -28,13 +25,13 @@ import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.MainActivity
-import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.*
 
 // Позже надо перейти к единому фрагменту и для просмотра, и для редактирования. Сам dress сделав тут LiveData и реализовывая как в книге
 
@@ -42,7 +39,8 @@ class DressInfoEditableFragment : BaseFragment() {
 
 
     class Screen (
-        val nameDressCategory: NamedCategory
+        val dressId: UUID,
+        val dressExists: Boolean
     ): BaseScreen
 
     override val viewModel by screenViewModel<DressInfoEditableViewModel>()
@@ -63,6 +61,26 @@ class DressInfoEditableFragment : BaseFragment() {
             }
         }
 
+        viewModel.currentDressFromRoom.observe(viewLifecycleOwner) {
+            viewModel.currentDress = it
+            if (viewModel.dress == null) {
+                viewModel.dress = it
+            }
+            Log.d("currentDressFromRoom", "loadDress()")
+            viewModel.loadDress()
+            updatePhotoView()
+            if (it.name != "") {
+                dressName.setText(it.name, TextView.BufferType.EDITABLE)
+            }
+            if (it.category != "") {
+                val position = viewModel.allCategoriesName.value!!.indexOf(it.category)
+                categoryChooseSpin.setText(categoryChooseSpin.adapter.getItem(position).toString(), false)
+            }
+            if (it.description != "") {
+                dressDescription.setText(it.description, TextView.BufferType.EDITABLE)
+            }
+        }
+
         return inflater.inflate(R.layout.dress_info_edit, container, false)
     }
 
@@ -71,11 +89,6 @@ class DressInfoEditableFragment : BaseFragment() {
         dressImage = view.findViewById(R.id.imageOfDress)
         dressName = view.findViewById(R.id.nameOfDress_input)
         dressDescription = view.findViewById(R.id.descriptionOfDress_edit)
-
-        viewModel.loadDress()
-        viewModel.photoUri = FileProvider.getUriForFile(requireActivity(),
-            "com.str.wardrobe.file-provider",
-            viewModel.photoFile)
 
         // Определение Spinner выбора категории
         categoryChooseSpin = view.findViewById(R.id.category_choose_spin)
@@ -94,9 +107,8 @@ class DressInfoEditableFragment : BaseFragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-//                viewModel.deleteDress()
-//                requireActivity().onBackPressed()
-                viewModel.closeWithoutSaveDress()
+                showExitAlertDialog()
+//                viewModel.closeWithoutSaveDress()
             }
         })
 
@@ -111,7 +123,7 @@ class DressInfoEditableFragment : BaseFragment() {
             try {
                 if (text != null) {
                     viewModel.setDressName(text.toString())
-                    viewModel.updateDB()
+//                    viewModel.updateDB()
                     dressName.error = null
                 } else {
                     dressName.error = "Заполните поле"
@@ -127,7 +139,7 @@ class DressInfoEditableFragment : BaseFragment() {
             try {
                 if (text != null) {
                     viewModel.setDressDescription(text.toString())
-                    viewModel.updateDB()
+//                    viewModel.updateDB()
                     dressDescription.error = null
                 } else {
                     dressDescription.error = "Заполните поле"
@@ -140,19 +152,22 @@ class DressInfoEditableFragment : BaseFragment() {
 
         // Определение слушателя для Spinner выбора категории
         categoryChooseSpin.setOnItemClickListener { parent, _, position, _ ->
-            if (viewModel.currentDress != null) {
-                    viewModel.currentDress!!.category =
-                        parent.getItemAtPosition(position).toString()
-                    viewModel.updateDB()
-                }
+            viewModel.currentDress!!.category =
+                parent.getItemAtPosition(position).toString()
+//            viewModel.updateDB()
         }
 
         dressImage.apply {
             setOnClickListener {
+                viewModel.photoUri = FileProvider.getUriForFile(requireActivity(),
+                    "com.str.wardrobe.file-provider",
+                    viewModel.photoFile!!
+                )
                showAlertDialog()
             }
         }
 
+        // Тут как-то тоже нужно реализовать AlertDialog
         (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
 
         // The usage of an interface lets you inject your own implementation
@@ -172,52 +187,43 @@ class DressInfoEditableFragment : BaseFragment() {
                 return when (menuItem.itemId) {
                     R.id.add_dress -> {
                         if (dressName.error == null && dressDescription.error == null) {
-                            if (!viewModel.currentDress?.name.equals("") &&
-                                !viewModel.currentDress?.description.equals("") &&
-                                !viewModel.currentDress?.category.equals("")) {
-
-                                viewModel.saveDress()
-
+                            when {
+                                viewModel.currentDress!!.name == "" -> {
+                                    viewModel.errorToast("Name")
+                                }
+                                viewModel.currentDress!!.description == "" -> {
+                                    viewModel.errorToast("Description")
+                                }
+                                viewModel.currentDress!!.category == "" -> {
+                                    viewModel.errorToast("Category")
+                                }
+                                else -> {
+                                    viewModel.saveDress()
+                                }
                             }
+//                            if (viewModel.currentDress.name != "" &&
+//                                viewModel.currentDress.description != "" &&
+//                                viewModel.currentDress.category != ""
+//                            ) {
+//                                viewModel.saveDress()
+//                            }
                         }
                         true
                     }
                     R.id.cancel_dress -> {
-                        viewModel.closeWithoutSaveDress()
+                        showExitAlertDialog()
+//                        viewModel.closeWithoutSaveDress()
                         true
                     }
                     else -> {
-                        viewModel.closeWithoutSaveDress()
+                        showExitAlertDialog()
+//                        viewModel.closeWithoutSaveDress()
                         false
                     }
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel.loadDress()
-        super.onCreate(savedInstanceState)
-    }
-
-    private fun updatePhotoView() {
-        if (viewModel.photoFile.exists()) {
-            lifecycleScope.launch {
-                val compressedPhotoFile =
-                    Compressor.compress(requireContext(), viewModel.photoFile) {
-                        resolution(1280, 720)
-                        quality(80)
-                        format(Bitmap.CompressFormat.WEBP)
-                        size(2_097_152) // 2 MB
-                        destination(viewModel.photoFile)
-                    }
-                dressImage.setImageURI(compressedPhotoFile.toUri())
-            }
-
-        } else {
-            dressImage.setImageResource(R.drawable.empty_photo)
-        }
     }
 
     override fun onPause() {
@@ -229,6 +235,28 @@ class DressInfoEditableFragment : BaseFragment() {
         Log.d("Resume", "Resume")
         updatePhotoView()
         super.onResume()
+    }
+
+    private fun updatePhotoView() {
+        if (viewModel.photoFile != null) {
+            if (viewModel.photoFile!!.exists()) {
+                lifecycleScope.launch {
+                    val compressedPhotoFile =
+                        Compressor.compress(requireContext(), viewModel.photoFile!!) {
+                            resolution(1280, 720)
+                            quality(80)
+                            format(Bitmap.CompressFormat.WEBP)
+                            size(2_097_152) // 2 MB
+                            destination(viewModel.photoFile!!)
+                        }
+                    dressImage.setImageURI(compressedPhotoFile.toUri())
+                }
+
+            } else {
+                dressImage.setImageResource(R.drawable.empty_photo)
+            }
+        }
+
     }
 
     private fun showAlertDialog() {
@@ -250,17 +278,61 @@ class DressInfoEditableFragment : BaseFragment() {
             .setPositiveButton(R.string.dress_photo_action_yes, listener)
             .setNegativeButton(R.string.dress_photo_action_no, listener)
             .setNeutralButton(R.string.dress_photo_action_ignore, listener)
-//            .setOnCancelListener {
-//
-//            }
-//            .setOnDismissListener {
-//
-//            }
+//            .setOnCancelListener { }
+//            .setOnDismissListener { }
             .create()
 
         dialog!!.show()
     }
 
+    private fun showExitAlertDialog() {
+        val listener = DialogInterface.OnClickListener { _, which ->
+            if (viewModel.dressExists) {
+                when (which) {
+                    DialogInterface.BUTTON_NEGATIVE -> viewModel.closeWithoutSaveDress(viewModel.dressExists, false)
+                    DialogInterface.BUTTON_NEUTRAL -> dialog!!.cancel()
+                    DialogInterface.BUTTON_POSITIVE -> viewModel.closeWithoutSaveDress(viewModel.dressExists, true)
+                }
+            } else {
+                when (which) {
+                    DialogInterface.BUTTON_NEGATIVE -> dialog!!.cancel()
+                    DialogInterface.BUTTON_NEUTRAL -> {}
+                    DialogInterface.BUTTON_POSITIVE -> viewModel.closeWithoutSaveDress(dressExists = false, save = false)
+                }
+            }
+        }
+
+        if (viewModel.dressExists) {
+            dialog = AlertDialog.Builder(requireContext())
+                .setCancelable(true)
+                .setIcon(R.mipmap.ic_launcher_round)
+                .setTitle(R.string.exit_alert_title)
+                .setMessage(R.string.exit_message_v_1)
+                .setPositiveButton(R.string.exit_yes, listener)
+                .setNegativeButton(R.string.exit_no, listener)
+                .setNeutralButton(R.string.exit_ignore, listener)
+//            .setOnCancelListener { }
+//            .setOnDismissListener { }
+                .create()
+
+            dialog!!.show()
+        } else {
+            dialog = AlertDialog.Builder(requireContext())
+                .setCancelable(true)
+                .setIcon(R.mipmap.ic_launcher_round)
+                .setTitle(R.string.exit_alert_title)
+                .setMessage(R.string.exit_message_v_2)
+                .setPositiveButton(R.string.exit_yes, listener)
+                .setNegativeButton(R.string.exit_no, listener)
+//            .setOnCancelListener { }
+//            .setOnDismissListener { }
+                .create()
+
+            dialog!!.show()
+        }
+
+
+    }
 
 //    private fun useGallery() {
 ////        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -308,12 +380,10 @@ private val selectImageFromGalleryResult = registerForActivityResult(ActivityRes
     uri?.let {
         val iStream : InputStream =
             requireActivity().contentResolver.openInputStream(uri)!!
-        copyStreamToFile(iStream, viewModel.photoFile)
+        copyStreamToFile(iStream, viewModel.photoFile!!)
         iStream.close()
     }
-//
-    }
-//
+}
 private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
         inputStream.use { input ->
             val outputStream = FileOutputStream(outputFile)
@@ -328,9 +398,6 @@ private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
             }
         }
     }
-
-
-
 
 //
 //    private fun showToast(@StringRes messageRes: Int) {

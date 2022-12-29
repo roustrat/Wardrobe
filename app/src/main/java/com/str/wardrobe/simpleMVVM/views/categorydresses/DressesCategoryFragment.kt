@@ -5,14 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.str.wardrobe.R
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
+import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.MainActivity
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 
