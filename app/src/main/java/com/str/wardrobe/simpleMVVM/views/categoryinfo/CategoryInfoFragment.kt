@@ -4,13 +4,18 @@ import android.nfc.FormatException
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.str.wardrobe.R
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
+import com.str.wardrobe.simpleMVVM.MainActivity
 
 class CategoryInfoFragment : BaseFragment() {
 
@@ -56,6 +61,45 @@ class CategoryInfoFragment : BaseFragment() {
             } catch (_: Exception) {
 
             }
+
+            // Тут как-то тоже нужно реализовать AlertDialog
+            (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
+
+            // The usage of an interface lets you inject your own implementation
+            val menuHost: MenuHost = requireActivity()
+            // Add menu items without using the Fragment Menu APIs
+            // Note how we can tie the MenuProvider to the viewLifecycleOwner
+            // and an optional Lifecycle.State (here, RESUMED) to indicate when
+            // the menu should be visible
+            menuHost.addMenuProvider(object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    // Add menu items here
+                    menuInflater.inflate(R.menu.menu_dress_fragment, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    // Handle the menu selection
+                    return when (menuItem.itemId) {
+                        R.id.add_category -> {
+                            if (viewModel.currentCategory.name == "") {
+                                categoryNameEdit.error
+                            } else {
+                                if (viewModel.currentCategory.description == "") {
+                                    categoryDescription.error
+                                } else {
+                                    viewModel.saveCategory()
+                                }
+                            }
+                            true
+                        }
+                        R.id.cancel_category -> {
+                            viewModel.closeWithoutSaveCategory()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         }
 
         // Определение EditText названия категории
@@ -73,35 +117,4 @@ class CategoryInfoFragment : BaseFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_category_fragment, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.add_category -> {
-                if (viewModel.currentCategory.name == "") {
-                    categoryNameEdit.error
-                } else {
-                    if (viewModel.currentCategory.description == "") {
-                        categoryDescription.error
-                    } else {
-                        viewModel.saveCategory()
-                    }
-                }
-                true
-            }
-            R.id.cancel_category -> {
-                viewModel.closeWithoutSaveCategory()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 }

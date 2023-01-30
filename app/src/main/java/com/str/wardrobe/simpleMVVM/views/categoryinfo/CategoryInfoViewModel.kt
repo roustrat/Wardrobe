@@ -37,4 +37,6 @@ class CategoryInfoViewModel (
         navigator.launch(screen)
     }
 
+    fun backFragmentScreen() : DressesCategoryFragment.Screen = DressesCategoryFragment.Screen()
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -30,7 +31,7 @@
         android:layout_marginBottom="0dp"
         android:hint="@string/dress_name"
         app:endIconMode="clear_text"
-        app:helperText="Обязательно*"
+        app:helperText="@string/helper_text"
         app:boxStrokeColor="@color/custom_input"
         app:boxStrokeErrorColor="@color/red"
         app:helperTextTextColor="@color/silver"
@@ -43,7 +44,8 @@
             android:layout_height="match_parent"
             android:textColor="@color/fourth_color"
             android:textSize="@dimen/app_text_size"
-            android:fontFamily="sans-serif-condensed-medium"/>
+            android:fontFamily="sans-serif-condensed-medium"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,7 +80,8 @@
             android:inputType="none"
             android:textColor="@color/fourth_color"
             android:textSize="@dimen/app_text_size"
-            android:fontFamily="sans-serif-condensed-medium"/>
+            android:fontFamily="sans-serif-condensed-medium"
+            tools:ignore="LabelFor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

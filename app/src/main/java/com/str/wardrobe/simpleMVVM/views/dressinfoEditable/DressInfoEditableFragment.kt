@@ -1,5 +1,6 @@
 package com.str.wardrobe.simpleMVVM.views.dressinfoEditable
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.view.MenuHost
@@ -19,19 +21,24 @@ import androidx.core.widget.doOnTextChanged
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import com.airbnb.paris.extensions.style
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.str.foundation.views.BaseFragment
 import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.MainActivity
+import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.lang.reflect.Field
 import java.util.*
+
 
 // Позже надо перейти к единому фрагменту и для просмотра, и для редактирования. Сам dress сделав тут LiveData и реализовывая как в книге
 
@@ -40,15 +47,19 @@ class DressInfoEditableFragment : BaseFragment() {
 
     class Screen (
         val dressId: UUID,
-        val dressExists: Boolean
+        val dressExists: Boolean,
+        val dressEdit: Boolean
     ): BaseScreen
 
     override val viewModel by screenViewModel<DressInfoEditableViewModel>()
 
     private lateinit var dressImage: ImageView
     private lateinit var dressName: TextInputEditText
+    private lateinit var dressNameBox: TextInputLayout
     private lateinit var categoryChooseSpin: AutoCompleteTextView
-    private lateinit var dressDescription: EditText
+    private lateinit var categoryChooseBox: TextInputLayout
+    private lateinit var dressDescription: TextInputEditText
+    private lateinit var dressDescriptionBox: TextInputLayout
     private  var dialog: AlertDialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,16 +80,8 @@ class DressInfoEditableFragment : BaseFragment() {
             Log.d("currentDressFromRoom", "loadDress()")
             viewModel.loadDress()
             updatePhotoView()
-            if (it.name != "") {
-                dressName.setText(it.name, TextView.BufferType.EDITABLE)
-            }
-            if (it.category != "") {
-                val position = viewModel.allCategoriesName.value!!.indexOf(it.category)
-                categoryChooseSpin.setText(categoryChooseSpin.adapter.getItem(position).toString(), false)
-            }
-            if (it.description != "") {
-                dressDescription.setText(it.description, TextView.BufferType.EDITABLE)
-            }
+            prepareViewsToEdit(viewModel.dressEdit)
+            prepareViewsToView(it)
         }
 
         return inflater.inflate(R.layout.dress_info_edit, container, false)
@@ -89,6 +92,10 @@ class DressInfoEditableFragment : BaseFragment() {
         dressImage = view.findViewById(R.id.imageOfDress)
         dressName = view.findViewById(R.id.nameOfDress_input)
         dressDescription = view.findViewById(R.id.descriptionOfDress_edit)
+
+        dressNameBox = view.findViewById(R.id.nameOfDress_input_layout)
+        categoryChooseBox = view.findViewById(R.id.category_choose_layout)
+        dressDescriptionBox = view.findViewById(R.id.descriptionOfDress_input_layout)
 
         // Определение Spinner выбора категории
         categoryChooseSpin = view.findViewById(R.id.category_choose_spin)
@@ -172,58 +179,8 @@ class DressInfoEditableFragment : BaseFragment() {
 
         // The usage of an interface lets you inject your own implementation
         val menuHost: MenuHost = requireActivity()
-        // Add menu items without using the Fragment Menu APIs
-        // Note how we can tie the MenuProvider to the viewLifecycleOwner
-        // and an optional Lifecycle.State (here, RESUMED) to indicate when
-        // the menu should be visible
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                // Add menu items here
-                menuInflater.inflate(R.menu.menu_dress_fragment, menu)
-            }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                // Handle the menu selection
-                return when (menuItem.itemId) {
-                    R.id.add_dress -> {
-                        if (dressName.error == null && dressDescription.error == null) {
-                            when {
-                                viewModel.currentDress!!.name == "" -> {
-                                    viewModel.errorToast("Name")
-                                }
-                                viewModel.currentDress!!.description == "" -> {
-                                    viewModel.errorToast("Description")
-                                }
-                                viewModel.currentDress!!.category == "" -> {
-                                    viewModel.errorToast("Category")
-                                }
-                                else -> {
-                                    viewModel.saveDress()
-                                }
-                            }
-//                            if (viewModel.currentDress.name != "" &&
-//                                viewModel.currentDress.description != "" &&
-//                                viewModel.currentDress.category != ""
-//                            ) {
-//                                viewModel.saveDress()
-//                            }
-                        }
-                        true
-                    }
-                    R.id.cancel_dress -> {
-                        showExitAlertDialog()
-//                        viewModel.closeWithoutSaveDress()
-                        true
-                    }
-                    else -> {
-                        showExitAlertDialog()
-//                        viewModel.closeWithoutSaveDress()
-                        false
-                    }
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
+        menuHostAddMenu(menuHost, viewModel.dressEdit)
     }
 
     override fun onPause() {
@@ -232,7 +189,7 @@ class DressInfoEditableFragment : BaseFragment() {
     }
 
     override fun onResume() {
-        Log.d("Resume", "Resume")
+//        menuHostAddMenu(menuHost, viewModel.dressEdit)
         updatePhotoView()
         super.onResume()
     }
@@ -376,15 +333,15 @@ class DressInfoEditableFragment : BaseFragment() {
 //        }
 //    }
 //
-private val selectImageFromGalleryResult = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-    uri?.let {
-        val iStream : InputStream =
-            requireActivity().contentResolver.openInputStream(uri)!!
-        copyStreamToFile(iStream, viewModel.photoFile!!)
-        iStream.close()
+    private val selectImageFromGalleryResult = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            val iStream : InputStream =
+                requireActivity().contentResolver.openInputStream(uri)!!
+            copyStreamToFile(iStream, viewModel.photoFile!!)
+            iStream.close()
+        }
     }
-}
-private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
+    private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
         inputStream.use { input ->
             val outputStream = FileOutputStream(outputFile)
             outputStream.use { output ->
@@ -397,6 +354,134 @@ private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
                 output.flush()
             }
         }
+    }
+
+    fun prepareViewsToEdit(dressEdit: Boolean) {
+        if (dressEdit) {
+            dressName.isEnabled = true
+            dressDescription.isEnabled = true
+            categoryChooseSpin.isEnabled = true
+        } else {
+            dressName.isEnabled = false
+            dressDescription.isEnabled = false
+//                val position = viewModel.allCategoriesName.value!!.indexOf(viewModel.currentDress?.category)
+//                categoryChooseSpin.setText(categoryChooseSpin.adapter.getItem(position).toString(), false)
+            categoryChooseSpin.isEnabled = false
+        }
+    }
+
+    fun prepareViewsToView(dress : NamedDress) {
+        if (dress.name != "") {
+            dressName.setText(dress.name, TextView.BufferType.EDITABLE)
+        }
+        if (dress.category != "") {
+            val position = viewModel.allCategoriesName.value!!.indexOf(dress.category)
+            categoryChooseSpin.setText(categoryChooseSpin.adapter.getItem(position).toString(), false)
+        }
+        if (dress.description != "") {
+            dressDescription.setText(dress.description, TextView.BufferType.EDITABLE)
+        }
+    }
+
+    @SuppressLint("ResourceAsColor")
+    fun resetOutline(colorId: Int) {
+        try {
+            val field: Field = TextInputLayout::class.java.getDeclaredField("defaultStrokeColor")
+            field.isAccessible = true
+            field.set(
+                dressNameBox,
+                ContextCompat.getColor(requireContext(), colorId)
+            )
+            field.set(
+                categoryChooseBox,
+                ContextCompat.getColor(requireContext(), colorId)
+            )
+            field.set(
+                dressDescriptionBox,
+                ContextCompat.getColor(requireContext(), colorId)
+            )
+        } catch (e: NoSuchFieldException) {
+            Log.w("TAG", "Failed to change box color, item might look wrong")
+        } catch (e: IllegalAccessException) {
+            Log.w("TAG", "Failed to change box color, item might look wrong")
+        }
+    }
+
+    fun resetHelperText(reset: Boolean) {
+        if (reset) {
+            dressNameBox.helperText = ""
+            dressDescriptionBox.helperText = ""
+        } else {
+            dressNameBox.helperText = R.string.helper_text.toString()
+            dressDescriptionBox.helperText = R.string.helper_text.toString()
+        }
+
+    }
+    fun menuHostAddMenu(menuHost: MenuHost, dressEdit: Boolean) {
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Add menu items here
+               return if (dressEdit) {
+                   resetOutline(R.color.custom_input)
+                    menuInflater.inflate(R.menu.menu_dress_fragment, menu)
+                } else {
+                   resetOutline(R.color.white)
+                   resetHelperText(true)
+                   menuInflater.inflate(R.menu.menu_dressinfo_fragment, menu)
+               }
+
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.add_dress -> {
+                        if (dressName.error == null && dressDescription.error == null) {
+                            when {
+                                viewModel.currentDress!!.name == "" -> {
+                                    viewModel.errorToast("Name")
+                                }
+                                viewModel.currentDress!!.description == "" -> {
+                                    viewModel.errorToast("Description")
+                                }
+                                viewModel.currentDress!!.category == "" -> {
+                                    viewModel.errorToast("Category")
+                                }
+                                else -> {
+                                    viewModel.saveDress()
+                                }
+                            }
+                        }
+                        true
+                    }
+                    R.id.cancel_dress -> {
+                        showExitAlertDialog()
+//                        viewModel.closeWithoutSaveDress()
+                        true
+                    }
+                    R.id.change -> {
+                        viewModel.dressEdit = true
+                        prepareViewsToEdit(true)
+                        menuHost.removeMenuProvider(this)
+                        menuHostAddMenu(menuHost, true)
+                        true
+                    }
+                    R.id.delete -> {
+                        viewModel.closeWithoutSaveDress(dressExists = true, save = false)
+                        true
+                    }
+                    else -> {
+                        showExitAlertDialog()
+//                        viewModel.closeWithoutSaveDress()
+                        false
+                    }
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
 //

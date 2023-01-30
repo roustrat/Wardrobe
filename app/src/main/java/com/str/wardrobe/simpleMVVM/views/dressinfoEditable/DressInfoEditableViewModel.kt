@@ -2,6 +2,7 @@ package com.str.wardrobe.simpleMVVM.views.dressinfoEditable
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import com.str.foundation.camerax.CameraXFragment
 import com.str.foundation.navigator.Navigator
 import com.str.foundation.uiactions.UiActions
@@ -16,7 +17,8 @@ class DressInfoEditableViewModel(
     screen: Screen,
     private val navigator: Navigator,
     private val repository: WardrobeRepository,
-    private val uiActions: UiActions
+    private val uiActions: UiActions,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel()  {
 
     private val repositoryPublic: WardrobeRepository = WardrobeRepository.get()
@@ -27,6 +29,7 @@ class DressInfoEditableViewModel(
 
     private val dressId = screen.dressId
     val dressExists = screen.dressExists
+    var dressEdit = screen.dressEdit
     var currentDressFromRoom = repositoryPublic.getDressById(dressId)
     var dress : NamedDress? = null
     var currentDress : NamedDress? = null
