@@ -89,6 +89,7 @@ class DressesAdapter(
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showPopupMenu(view: View) {
         val popupMenu = PopupMenu(view.context, view)
         val context = view.context

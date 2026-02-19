@@ -23,7 +23,7 @@ import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.FragmentsHolder
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
-import com.str.wardrobe.simpleMVVM.views.categoryinfo.CategoryInfoFragment
+import com.str.wardrobe.simpleMVVM.views.categoryinfo.CategoryViewFragment
 
 
 class MainActivity : AppCompatActivity(), FragmentsHolder {
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
                 }
                 R.id.nav_new_category -> {
                     this.drawerLayout.closeDrawer(GravityCompat.START)
-                    val screen = CategoryInfoFragment.Screen()
+                    val screen = CategoryViewFragment.Screen()
                     // as screen classes are inside fragments -> we can create fragment directly from screen
                     val fragment = screen.javaClass.enclosingClass.newInstance() as Fragment
                     // set screen object as fragment's argument

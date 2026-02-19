@@ -7,7 +7,7 @@ import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
 import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 
-class CategoryInfoViewModel (
+class CategoryViewModel (
     private val navigator: Navigator,
     private val uiActions: UiActions,
     private val repository: WardrobeRepository
@@ -28,7 +28,7 @@ class CategoryInfoViewModel (
     fun saveCategory() {
         repositoryPublic.addCategory(currentCategory)
         val screen = DressesCategoryFragment.Screen()
-        navigator.launch(screen)
+        navigator.launchWithRemove(screen)
     }
 
     fun closeWithoutSaveCategory() {
@@ -39,4 +39,7 @@ class CategoryInfoViewModel (
 
     fun backFragmentScreen() : DressesCategoryFragment.Screen = DressesCategoryFragment.Screen()
 
+    fun errorToast(name: String) {
+        uiActions.toast("$name is empty")
+    }
 }

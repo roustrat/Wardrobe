@@ -16,7 +16,6 @@ import com.str.foundation.views.BaseScreen
 import com.str.wardrobe.R
 import com.str.wardrobe.simpleMVVM.MainActivity
 import com.str.wardrobe.simpleMVVM.views.categorydresses.DressesCategoryFragment
-import com.str.wardrobe.simpleMVVM.views.dressInfo.DressInfoFragment
 
 class StackFragmentNavigator(
     private val activity: AppCompatActivity,

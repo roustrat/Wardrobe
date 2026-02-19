@@ -10,7 +10,6 @@ import com.str.foundation.views.BaseViewModel
 import com.str.wardrobe.simpleMVVM.model.WardrobeRepository
 import com.str.wardrobe.simpleMVVM.model.entities.NamedCategory
 import com.str.wardrobe.simpleMVVM.model.entities.NamedDress
-import com.str.wardrobe.simpleMVVM.views.dressInfo.DressInfoFragment
 import com.str.wardrobe.simpleMVVM.views.dressinfoEditable.DressInfoEditableFragment
 import java.util.*
 
@@ -24,7 +23,7 @@ class DressesCategoryViewModel (
     // Надо подумать как сделать их private
     var allCategory : LiveData<List<NamedCategory>> = repositoryPublic.getCategories()
     var currentCategory : MutableLiveData<NamedCategory> = MutableLiveData<NamedCategory>()
-//    var allDresses : LiveData<List<NamedDress>> = repositoryPublic.getAvailableDresses()
+    var allDresses : LiveData<List<NamedDress>> = repositoryPublic.getAvailableDresses()
     var currentDresses : LiveData<List<NamedDress>> = Transformations.switchMap(currentCategory) {
         repositoryPublic.getDressesOfCategory(it.name)
     }

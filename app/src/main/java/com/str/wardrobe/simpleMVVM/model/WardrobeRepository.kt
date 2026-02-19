@@ -96,6 +96,7 @@ class WardrobeRepository(context: Context) : WardrobeBaseRepository {
         fun deleteCategory(category: NamedCategory) {
             executor.execute {
                 namedCategoryDao.deleteCategory(category)
+                // Предусмотреть при удалении категории удаление и его одежды
             }
         }
 

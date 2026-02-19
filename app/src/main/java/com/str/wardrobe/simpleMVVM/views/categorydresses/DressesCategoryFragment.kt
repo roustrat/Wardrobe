@@ -58,7 +58,6 @@ class DressesCategoryFragment : BaseFragment() {
                     viewModel.currentDress = viewModel.currentDresses.value!!.first()
                 } else {
                     adapterDress.items = emptyList()
-                    Log.d("currentCategory", "empty")
                 }
             }
             Log.d("currentCategory_1", "${viewModel.currentDresses.value == null}")
@@ -71,9 +70,24 @@ class DressesCategoryFragment : BaseFragment() {
                     Log.d("currentDresses", adapterDress.items.first().name)
                     adapterDress.notifyDataSetChanged()
                     viewModel.currentDress = it.first()
+                } else {
+                    adapterDress.items = emptyList()
+                    adapterDress.notifyDataSetChanged()
                 }
             }
         }
+
+        viewModel.allDresses.observe(viewLifecycleOwner) {
+            if (it != null) {
+                if (it.isNotEmpty()) {
+                    Log.d("currentDresses", it.first().category)
+                } else {
+                    Log.d("currentDresses", "message")
+                    adapterDress.notifyDataSetChanged()
+                }
+            }
+        }
+
         return binding
     }
 
@@ -106,6 +120,14 @@ class DressesCategoryFragment : BaseFragment() {
                 categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
         })
+
+//        categoriesRecyclerView.viewTreeObserver.addOnScrollChangedListener(object : ViewTreeObserver.OnScrollChangedListener {
+//            override fun onScrollChanged() {
+//                categoriesRecyclerView.viewTreeObserver.removeOnScrollChangedListener(this)
+//                categoriesRecyclerView.adapter = adapter
+//                categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+//            }
+//        })
     }
 
     private fun setupDressLayoutManager(binding: View, adapter: DressesAdapter) {

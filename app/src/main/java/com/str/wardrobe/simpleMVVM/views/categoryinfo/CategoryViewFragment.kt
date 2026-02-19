@@ -17,12 +17,12 @@ import com.str.foundation.views.BaseScreen
 import com.str.foundation.views.screenViewModel
 import com.str.wardrobe.simpleMVVM.MainActivity
 
-class CategoryInfoFragment : BaseFragment() {
+class CategoryViewFragment : BaseFragment() {
 
     // no arguments for this screen
     class Screen : BaseScreen
 
-    override val viewModel by screenViewModel<CategoryInfoViewModel>()
+    override val viewModel by screenViewModel<CategoryViewModel>()
 
     private lateinit var categoryNameInput: TextInputLayout
     private lateinit var categoryNameEdit: TextInputEditText
@@ -49,57 +49,64 @@ class CategoryInfoFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+
+        // Тут как-то тоже нужно реализовать AlertDialog
+        (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
+
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Add menu items here
+                menuInflater.inflate(R.menu.menu_category_fragment, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.add_category -> {
+                        if (categoryNameEdit.error == null && categoryDescription.error == null) {
+                            when {
+                                viewModel.currentCategory.name == "" -> {
+                                    viewModel.errorToast("Name")
+                                }
+                                viewModel.currentCategory.description == "" -> {
+                                    viewModel.errorToast("Description")
+                                }
+                                else -> {
+                                    viewModel.saveCategory()
+                                }
+                            }
+                        }
+                        true
+                    }
+                    R.id.cancel_category -> {
+                        viewModel.closeWithoutSaveCategory()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         // Определение EditText названия категории
         categoryNameEdit.doOnTextChanged { text, _, _, _ ->
             try {
                 if (text != null) {
                     viewModel.setCategoryName(text.toString())
-                } else {
                     categoryNameEdit.error = null
+                } else {
+                    categoryNameEdit.error = "Заполните поле"
                 }
 
             } catch (_: Exception) {
 
             }
 
-            // Тут как-то тоже нужно реализовать AlertDialog
-            (activity as MainActivity?)!!.resetActionBar(true, DrawerLayout.LOCK_MODE_LOCKED_CLOSED, viewModel.backFragmentScreen())
-
-            // The usage of an interface lets you inject your own implementation
-            val menuHost: MenuHost = requireActivity()
-            // Add menu items without using the Fragment Menu APIs
-            // Note how we can tie the MenuProvider to the viewLifecycleOwner
-            // and an optional Lifecycle.State (here, RESUMED) to indicate when
-            // the menu should be visible
-            menuHost.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    // Add menu items here
-                    menuInflater.inflate(R.menu.menu_dress_fragment, menu)
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    // Handle the menu selection
-                    return when (menuItem.itemId) {
-                        R.id.add_category -> {
-                            if (viewModel.currentCategory.name == "") {
-                                categoryNameEdit.error
-                            } else {
-                                if (viewModel.currentCategory.description == "") {
-                                    categoryDescription.error
-                                } else {
-                                    viewModel.saveCategory()
-                                }
-                            }
-                            true
-                        }
-                        R.id.cancel_category -> {
-                            viewModel.closeWithoutSaveCategory()
-                            true
-                        }
-                        else -> false
-                    }
-                }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         }
 
         // Определение EditText названия категории
@@ -107,8 +114,9 @@ class CategoryInfoFragment : BaseFragment() {
             try {
                 if (text != null) {
                     viewModel.setCategoryDescription(text.toString())
-                } else {
                     categoryDescription.error = null
+                } else {
+                    categoryDescription.error = "Заполните поле"
                 }
 
             } catch (_: FormatException) {

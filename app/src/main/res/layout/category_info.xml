@@ -7,29 +7,32 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameOfCategory_input"
-        style="@style/TextInputStyle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintBottom_toTopOf="@id/descriptionOfCategory_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_margin="40dp"
-        android:layout_weight="4"
-        android:paddingStart="5dp"
-        app:endIconMode="clear_text">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="50dp"
+        android:hint="@string/dress_name"
+        app:endIconMode="clear_text"
+        app:helperText="@string/helper_text"
+        app:boxStrokeColor="@color/custom_input"
+        app:boxStrokeErrorColor="@color/red"
+        app:helperTextTextColor="@color/silver"
+        android:textColorHint="@color/silver"
+        app:hintTextColor="@color/silver">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nameOfCategory_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="-5dp"
-            android:layout_marginTop="-5dp"
-            android:layout_marginEnd="-5dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:textAlignment="center"
             android:textSize="16sp"
-            android:background="@color/white" />
+            android:fontFamily="sans-serif-condensed-medium"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
